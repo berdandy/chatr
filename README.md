@@ -50,7 +50,7 @@ Suitable for pasting into a build webpage.
 
 - [Install windows build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). Rustup will give more details, but c++ win10 sdk required.
 - [Install Rustup](https://www.rust-lang.org/tools/install)
-- Version Control
+- And then...
 ```
 winget install --id Git.Git
 winget install --id GitHub.cli
@@ -61,6 +61,7 @@ cd chatr; cargo build
 ## mac
 
 - [install brew](https://brew.sh/)
+- And then...
 ```
 brew install git gh
 gh repo clone accessibilitywars/chatr
@@ -70,6 +71,7 @@ cd chatr; cargo build
 ## linux
 
 - install git, gh, rust (TODO: specific commands)
+- And then...
 ```
 gh repo clone accessibilitywars/chatr
 cd chatr; cargo build
