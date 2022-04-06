@@ -37,6 +37,7 @@ Suitable for pasting into a build webpage.
 - [ ] add support for ranger pets
 - [ ] add support for revenant legendary stances
 - [x] auto trim `[&` and `]`
+- [ ] change these TODOs into github issues
 
 ### Medium term
 
