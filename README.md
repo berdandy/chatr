@@ -34,6 +34,12 @@ Suitable for pasting into a build webpage.
 - [ ] add support for revenant legendary stances
 - [ ] auto trim `[&` and `]`
 
-### Long shot
+### Medium term
+
+- [ ] make binary release (windows)
+- [ ] make binary release (mac)
+- [ ] build a gui for casual use
+
+### Long term
 
 - [ ] add support for equipment templates
