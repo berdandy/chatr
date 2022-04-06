@@ -108,15 +108,28 @@ fn print_armory_code(build: BuildTemplate, trait_ids_by_spec : HashMap<u8, [u16;
 );
 }
 
+fn remove_chatcode_decoration(code: &str) -> &str {
+    if ! code.starts_with("[&") || ! code.ends_with("]") {
+        return code
+    }
+    eprintln!("Input: {}, trimming chat characters", code);
+    let mut chars = code.chars();
+    chars.next();
+    chars.next();
+    chars.next_back();
+    chars.as_str()
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
-        println!("Usage: {} <chat-code>", args[0]);
+        eprintln!("Usage: {} <chat-code>", args[0]);
         process::exit(1);
     }
 
-    let chatcode = &args[1];
-    println!("Deciphering {}", chatcode);
+    let input = &args[1];
+    let chatcode = remove_chatcode_decoration(input);
+    eprintln!("Deciphering {}", chatcode);
 
     let data = base64::decode(chatcode)
         .expect("invaid base64");
