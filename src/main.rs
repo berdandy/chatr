@@ -50,7 +50,23 @@ pub struct BuildTemplate {
     aquatic_utility_skill_palette_3: u16,
     terrestrial_elite_skill_palette: u16,
     aquatic_elite_skill_palette: u16,
+
+    // only valid if ranger (profession==4) or revenant (profession==9)
+    terrestrial_pet1_active_legend: u8,
+    terrestrial_pet2_inactive_legend: u8,
+    aquatic_pet1_active_legend: u8,
+    aquatic_pet2_inactive_legend: u8,
 }
+
+// ranger: https://api.guildwars2.com/v2/pets/{}
+// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
+//   a link to a png file for `icon`. We can render that. Also a caption for the pet `name` just to
+//   be clear about things.
+//
+// revenant: https://api.guildwars2.com/v2/legends/Legend{}
+// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
+//   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
+//   revenant. Players can't change them.
 
 fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, serde_json::Error> {
     let mut trait_map = HashMap::new();
@@ -136,7 +152,7 @@ fn main() {
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-    // println!("{:?}", build);
+    eprintln!("DEBUG DUMP: {:?}", build);
 
     let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3]).unwrap();
     // println!("{:?}", trait_ids_by_spec);
