@@ -36,7 +36,7 @@ Suitable for pasting into a build webpage.
 - [ ] add support for skills
 - [ ] add support for ranger pets
 - [ ] add support for revenant legendary stances
-- [ ] auto trim `[&` and `]`
+- [x] auto trim `[&` and `]`
 
 ### Medium term
 
