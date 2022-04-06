@@ -87,24 +87,24 @@ fn print_armory_code(build: BuildTemplate, trait_ids_by_spec : HashMap<u8, [u16;
     println!("\
 <div
   data-armory-embed='specializations'
-  data-armory-ids='{},{},{}'
-  data-armory-{}-traits='{},{},{}'
-  data-armory-{}-traits='{},{},{}'
-  data-armory-{}-traits='{},{},{}'
+  data-armory-ids='{spec1},{spec2},{spec3}'
+  data-armory-{spec1}-traits='{trait11},{trait12},{trait13}'
+  data-armory-{spec2}-traits='{trait21},{trait22},{trait23}'
+  data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'
 >
-</div>", &build.specialization1, &build.specialization2, &build.specialization3,
-        &build.specialization1,
-            trait_ids1[(build.trait_adept_1 - 1) as usize],
-            trait_ids1[(build.trait_master_1 + 3 - 1) as usize],
-            trait_ids1[(build.trait_grandmaster_1 + 6 - 1) as usize],
-        &build.specialization2,
-            trait_ids2[(build.trait_adept_2 - 1) as usize],
-            trait_ids2[(build.trait_master_2 + 3 - 1) as usize],
-            trait_ids2[(build.trait_grandmaster_2 + 6 - 1) as usize],
-        &build.specialization3,
-            trait_ids3[(build.trait_adept_3 - 1) as usize],
-            trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
-            trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
+</div>",
+	spec1=&build.specialization1,
+	spec2=&build.specialization2,
+	spec3=&build.specialization3,
+    trait11=trait_ids1[(build.trait_adept_1 - 1) as usize],
+	trait12=trait_ids1[(build.trait_master_1 + 3 - 1) as usize],
+	trait13=trait_ids1[(build.trait_grandmaster_1 + 6 - 1) as usize],
+	trait21=trait_ids2[(build.trait_adept_2 - 1) as usize],
+	trait22=trait_ids2[(build.trait_master_2 + 3 - 1) as usize],
+	trait23=trait_ids2[(build.trait_grandmaster_2 + 6 - 1) as usize],
+	trait31=trait_ids3[(build.trait_adept_3 - 1) as usize],
+	trait32=trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
+	trait33=trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
 );
 }
 
