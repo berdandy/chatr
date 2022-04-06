@@ -40,7 +40,7 @@ Suitable for pasting into a build webpage.
 
 ### Medium term
 
-- [ ] make binary release (windows)
+- [x] make binary release (windows)
 - [ ] make binary release (mac)
 - [ ] build a gui for casual use
 
