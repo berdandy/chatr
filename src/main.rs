@@ -52,6 +52,62 @@ pub struct BuildTemplate {
     aquatic_elite_skill_palette: u16,
 }
 
+fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, serde_json::Error> {
+    let mut trait_map = HashMap::new();
+
+    for spec_id in specs {
+        let request_url = format!("https://api.guildwars2.com/v2/specializations/{}", spec_id);
+        let spec_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+        // println!("{:?}", spec_data);
+
+        // Parse the string of data into serde_json::Value.
+        let v: serde_json::Value = serde_json::from_str(&spec_data)?;
+        let trait_ids: [u16; 9] = [
+            v["major_traits"][0].as_u64().unwrap() as u16,
+            v["major_traits"][1].as_u64().unwrap() as u16,
+            v["major_traits"][2].as_u64().unwrap() as u16,
+            v["major_traits"][3].as_u64().unwrap() as u16,
+            v["major_traits"][4].as_u64().unwrap() as u16,
+            v["major_traits"][5].as_u64().unwrap() as u16,
+            v["major_traits"][6].as_u64().unwrap() as u16,
+            v["major_traits"][7].as_u64().unwrap() as u16,
+            v["major_traits"][8].as_u64().unwrap() as u16
+        ];
+        trait_map.insert(spec_id, trait_ids);
+    }
+
+    Ok(trait_map)
+}
+
+fn print_armory_code(build: BuildTemplate, trait_ids_by_spec : HashMap<u8, [u16;9]>) {
+    let trait_ids1 = trait_ids_by_spec[&build.specialization1];
+    let trait_ids2 = trait_ids_by_spec[&build.specialization2];
+    let trait_ids3 = trait_ids_by_spec[&build.specialization3];
+
+    println!("\
+<div
+  data-armory-embed='specializations'
+  data-armory-ids='{},{},{}'
+  data-armory-{}-traits='{},{},{}'
+  data-armory-{}-traits='{},{},{}'
+  data-armory-{}-traits='{},{},{}'
+>
+</div>", &build.specialization1, &build.specialization2, &build.specialization3,
+        &build.specialization1,
+            trait_ids1[(build.trait_adept_1 - 1) as usize],
+            trait_ids1[(build.trait_master_1 + 3 - 1) as usize],
+            trait_ids1[(build.trait_grandmaster_1 + 6 - 1) as usize],
+        &build.specialization2,
+            trait_ids2[(build.trait_adept_2 - 1) as usize],
+            trait_ids2[(build.trait_master_2 + 3 - 1) as usize],
+            trait_ids2[(build.trait_grandmaster_2 + 6 - 1) as usize],
+        &build.specialization3,
+            trait_ids3[(build.trait_adept_3 - 1) as usize],
+            trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
+            trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
+);
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
@@ -67,20 +123,10 @@ fn main() {
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-    println!("{:?}", build);
+    // println!("{:?}", build);
 
-    // hardcoded for testing, but this should hit the GW2 API at https://api.guildwars2.com/v2/specializations/<id>
-    let trait_ids_by_specialization = HashMap::from([
-        (1, [701, 705, 700, 1889, 1960, 708, 692, 1950, 704]),      // mesmer - dueling
-        (6, [514, 525, 1882, 482, 1892, 1944, 1541, 505, 1947]),    // engineer - explosives
-    ]);
+    let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3]).unwrap();
+    // println!("{:?}", trait_ids_by_spec);
 
-    if trait_ids_by_specialization.contains_key(&build.specialization1)
-    {
-        let trait_ids = trait_ids_by_specialization[&build.specialization1];
-        let trait1 = trait_ids[(build.trait_adept_1 - 1) as usize];
-        let trait2 = trait_ids[(build.trait_master_1 + 3 - 1) as usize];
-        let trait3 = trait_ids[(build.trait_grandmaster_1 + 6 - 1) as usize];
-        println!("Traits: {} {} {}", trait1, trait2, trait3);
-    }
+    print_armory_code(build, trait_ids_by_spec);
 }
