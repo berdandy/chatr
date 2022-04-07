@@ -219,7 +219,7 @@ fn main() {
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-    //eprintln!("DEBUG DUMP: {:?}", build);
+    // eprintln!("DEBUG DUMP: {:?}", build);
 
     let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3]).unwrap();
     // println!("{:?}", trait_ids_by_spec);
