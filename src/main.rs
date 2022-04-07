@@ -8,7 +8,7 @@ use deku::prelude::*;
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 pub struct BuildTemplate {
     magic: u8,              // must be 0xD
-    profession: u8,         // 0-based, IDs on API are 1-based (but not used by armory-embeds, so w/e)
+    profession: u8,         // 0-based, IDs on API are 1-based
 
     specialization1: u8,
     #[deku(bits = "2")]
@@ -58,6 +58,52 @@ pub struct BuildTemplate {
     aquatic_pet2_inactive_legend: u8,
 }
 
+const PROFESSIONS: &'static [&str] = &[
+    "Guardian",
+    "Warrior",
+    "Engineer",
+    "Ranger",
+    "Thief",
+    "Elementalist",
+    "Mesmer",
+    "Necromancer",
+    "Revenant"
+  ];
+
+fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Error> {
+    // skills:
+    //   build contains palette ids
+    //   palette ids are mapped to ability ids via https://api.guildwars2.com/v2/professions/{PROFESSIONS[build.profession]}
+
+    let profession_id = PROFESSIONS[(build.profession - 1) as usize];
+    let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=2019-12-19T00:00:00Z", profession_id);
+    let palette_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+    // println!("{:?}", palette_data);
+
+    // Parse the string of data into serde_json::Value.
+    let v: serde_json::Value = serde_json::from_str(&palette_data)?;
+    let a = v["skills_by_palette"].as_array().unwrap();
+    // println!("{:?}", a);
+    let mut skill_palette_map = HashMap::new();
+    for mapping in a {
+        let skills_by_palette = mapping.as_array().unwrap();
+        skill_palette_map.insert(
+            skills_by_palette[0].as_u64().unwrap() as u16,
+            skills_by_palette[1].as_u64().unwrap() as u16
+        );
+    }
+    // println!("{:?}", skill_palette_map);
+
+    let skills: [u16 ; 5] = [
+        skill_palette_map[&build.terrestrial_healing_skill_palette],
+        skill_palette_map[&build.terrestrial_utility_skill_palette_1],
+        skill_palette_map[&build.terrestrial_utility_skill_palette_2],
+        skill_palette_map[&build.terrestrial_utility_skill_palette_3],
+        skill_palette_map[&build.terrestrial_elite_skill_palette],
+    ];
+    Ok(skills)
+}
+
 // ranger: https://api.guildwars2.com/v2/pets/{}
 // - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
 //   a link to a png file for `icon`. We can render that. Also a caption for the pet `name` just to
@@ -95,12 +141,26 @@ fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, serde_json::Er
     Ok(trait_map)
 }
 
-fn print_armory_code(build: BuildTemplate, trait_ids_by_spec : HashMap<u8, [u16;9]>) {
+/*
+fn print_armory_code(build: BuildTemplate, skill_ids_by_palette : HashMap<u8, [u16;9]>) {
+<div
+    data-armory-embed='skills'
+    data-armory-ids='5857,5927,5912,5836,5868'
+>
+</div>
+*/
+
+fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec : HashMap<u8, [u16;9]>) {
     let trait_ids1 = trait_ids_by_spec[&build.specialization1];
     let trait_ids2 = trait_ids_by_spec[&build.specialization2];
     let trait_ids3 = trait_ids_by_spec[&build.specialization3];
 
     println!("\
+<div
+  data-armory-embed='skills'
+  data-armory-ids='{healing},{utility1},{utility2},{utility3},{elite}'
+>
+</div>
 <div
   data-armory-embed='specializations'
   data-armory-ids='{spec1},{spec2},{spec3}'
@@ -108,7 +168,14 @@ fn print_armory_code(build: BuildTemplate, trait_ids_by_spec : HashMap<u8, [u16;
   data-armory-{spec2}-traits='{trait21},{trait22},{trait23}'
   data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'
 >
-</div>",
+</div>
+<script async src='https://unpkg.com/armory-embeds@^0.x.x/armory-embeds.js'></script>
+",
+    healing=skills[0],
+    utility1=skills[1],
+    utility2=skills[2],
+    utility3=skills[3],
+    elite=skills[4],
 	spec1=&build.specialization1,
 	spec2=&build.specialization2,
 	spec3=&build.specialization3,
@@ -152,10 +219,13 @@ fn main() {
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-    eprintln!("DEBUG DUMP: {:?}", build);
+    //eprintln!("DEBUG DUMP: {:?}", build);
 
     let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3]).unwrap();
     // println!("{:?}", trait_ids_by_spec);
 
-    print_armory_code(build, trait_ids_by_spec);
+    let skill_ids = get_skill_ids(&build);
+    // println!("{:?}", skill_ids);
+
+    print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec);
 }
