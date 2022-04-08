@@ -30,30 +30,7 @@ Deciphering DQMGKiYaHT4oAQAAkwEAAI4BAAAiAQAAiQEAAAAAAAAAAAAAAAAAAAAAAAA=
 <script async src='https://unpkg.com/armory-embeds@^0.x.x/armory-embeds.js'></script>
 ```
 
-Suitable for pasting into a build webpage.
-
-# TODO:
-
-- [x] figure out how to make a REST api call from rust
-- [x] figure out how to unpack base64 string to struct from Anet
-- [x] translate struct into IDs
-- [x] format IDs into armory-embeds output template
-- [x] add support for traits and specializations
-- [x] add support for skills
-- [ ] add support for ranger pets
-- [ ] add support for revenant legendary stances
-- [x] auto trim `[&` and `]`
-- [ ] change these TODOs into github issues
-
-### Medium Term
-
-- [x] make binary release (windows)
-- [ ] make binary release (mac)
-
-### Long Term / Maybe
-
-- [ ] add support for equipment templates
-- [ ] build a gui for casual use
+Suitable for copy-pasting into a build webpage.
 
 # Dev Setup (on fresh machine)
 
