@@ -37,8 +37,9 @@ Suitable for copy-pasting into a build webpage.
 
 # Dev Setup (on fresh machine)
 
-## Windows 11 (winget):
+## Windows 10/11 (winget):
 
+- Winget is available pre-installed on Windows 11.
 - [Install windows build tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). Rustup will give more details, but c++ win10 sdk required.
 - [Install Rustup](https://www.rust-lang.org/tools/install)
 - And then...
@@ -48,6 +49,8 @@ winget install --id GitHub.cli
 gh repo clone accessibilitywars/chatr
 cd chatr; cargo build
 ```
+
+_I like winget for a solid pre-installed package manager on Windows 11. See [here for more info on earlier versions](https://docs.microsoft.com/en-us/windows/package-manager/winget/). Or simply install Git & GitHub CLI [using a different method](https://github.com/cli/cli#windows)_
 
 ## mac
 
