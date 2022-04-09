@@ -191,16 +191,18 @@ fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec :
 );
 }
 
-fn remove_chatcode_decoration(code: &str) -> &str {
-    if ! code.starts_with("[&") || ! code.ends_with("]") {
-        return code
-    }
-    eprintln!("Input: {}, trimming chat characters", code);
-    let mut chars = code.chars();
-    chars.next();
-    chars.next();
-    chars.next_back();
-    chars.as_str()
+fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, decorated
+    if input.starts_with("[&") && input.ends_with("]") {
+		let mut raw = input.chars();
+		raw.next();
+		raw.next();
+		raw.next_back();
+
+        return (String::from(raw.as_str()), input.to_string())
+    } else {
+		let decorated = format!("[&{}]", input);
+		return (input.to_string(), decorated.to_string())
+	}
 }
 
 fn main() {
@@ -211,8 +213,8 @@ fn main() {
     }
 
     let input = &args[1];
-    let chatcode = remove_chatcode_decoration(input);
-    eprintln!("Deciphering {}", chatcode);
+    let (chatcode, decorated) = fix_chatcode_decoration(input);
+    println!("`{}`\n\n---\n", decorated);
 
     let data = base64::decode(chatcode)
         .expect("invaid base64");
