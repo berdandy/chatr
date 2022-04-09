@@ -13,7 +13,10 @@ OR
 Output:
 
 ```
-Deciphering DQMGKiYaHT4oAQAAkwEAAI4BAAAiAQAAiQEAAAAAAAAAAAAAAAAAAAAAAAA=
+`[&DQMGKiYaHT4oAQAAkwEAAI4BAAAiAQAAiQEAAAAAAAAAAAAAAAAAAAAAAAA=]`
+
+---
+
 <div
   data-armory-embed='skills'
   data-armory-ids='5857,5927,5912,5836,5868'
