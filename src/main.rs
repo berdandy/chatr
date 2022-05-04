@@ -169,7 +169,6 @@ fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec :
   data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'
 >
 </div>
-<script async src='https://unpkg.com/armory-embeds@^0.x.x/armory-embeds.js'></script>
 ",
     healing=skills[0],
     utility1=skills[1],
