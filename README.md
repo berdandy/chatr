@@ -36,6 +36,8 @@ Suitable for copy-pasting into a build webpage.
 
 # Dev Setup (on fresh machine)
 
+The following instructions are only required if you wish to build chatr from source. If you're just downloading the release, this not not required. Chatr just needs to be your PATH or current directory (for windows)
+
 ## Windows 10/11 (winget):
 
 - Winget is available pre-installed on Windows 11.
