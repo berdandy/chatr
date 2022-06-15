@@ -230,3 +230,21 @@ fn main() {
 
     print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn trim_chatcode_decoration() {
+        let data = "[&123456]";
+        assert_eq!(remove_chatcode_decoration(data), "123456");
+    }
+
+    #[test]
+    fn non_chatcode_no_trim() {
+        let data = "123456";
+        assert_eq!(remove_chatcode_decoration(data), "123456");
+    }
+}
+
