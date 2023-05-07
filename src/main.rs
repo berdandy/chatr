@@ -2,6 +2,9 @@ use std::env;
 use std::process;
 use std::collections::HashMap;
 
+use base64::engine::Engine as _;
+use base64::engine::general_purpose::STANDARD as BASE64;
+
 use deku::prelude::*;
 
 // see cpp reference doc
@@ -114,6 +117,81 @@ fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Error> {
 //   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
 //   revenant. Players can't change them.
 
+fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, serde_json::Error> {
+	let mut pet_names = "Pets: ".to_string();
+
+	let request_url = format!("https://api.guildwars2.com/v2/pets/{}", pet1);
+	let pet_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	// println!("{:?}", pet_data);
+
+	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
+	// println!("{:?}", v);
+
+	pet_names += &String::from(v["name"].as_str().unwrap());
+	pet_names += " / ";
+
+	let request_url = format!("https://api.guildwars2.com/v2/pets/{}", pet2);
+	let pet2_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	// println!("{:?}", pet2_data);
+
+	let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
+
+	pet_names += &String::from(v2["name"].as_str().unwrap());
+
+	Ok(pet_names)
+}
+
+fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_json::Error> {
+	// get list of legends
+	let request_url = format!("https://api.guildwars2.com/v2/legends?v=2019-12-19T00:00:00Z");//, legend1);
+	let legend_name_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	// println!("{:?}", legend_data);
+	let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
+	// println!("{:?}", v);
+	let legend_names = legend_name_v.as_array().unwrap();
+	// println!("{:?}", legend_names);
+
+	let mut first = true;
+	let mut output = "<div
+  data-armory-embed='skills'
+  data-armory-ids='".to_string();
+	for legend in legend_names {
+		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=2019-12-19T00:00:00Z", legend.as_str().unwrap());
+		// println!("{:?}", request_url);
+		let legend_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+		let v: serde_json::Value = serde_json::from_str(&legend_data)?;
+
+		// println!("{:?}", v);
+
+		let code = v["code"].as_u64().unwrap() as u8;
+		if code == legend1 || code == legend2 {
+			let swap = v["swap"].as_u64().unwrap(); 
+			if first {
+				output += &format!("{}", swap).to_string();
+				first = false;
+			} else {
+				output += &format!(",{}", swap).to_string();
+			}
+		}
+	}
+	output += &"'
+>
+</div>".to_string();
+
+	// println!("{:?}", output);
+
+	Ok(output)
+}
+
+// only non-empty if ranger (profession==4) or revenant (profession==9)
+fn get_misc_data_string(build: &BuildTemplate) -> Result<String, serde_json::Error> {
+	match build.profession {
+		4 => get_ranger_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
+		9 => get_revenant_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
+		_ => Ok(String::new())
+	}
+}
+
 fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, serde_json::Error> {
     let mut trait_map = HashMap::new();
 
@@ -150,12 +228,13 @@ fn print_armory_code(build: BuildTemplate, skill_ids_by_palette : HashMap<u8, [u
 </div>
 */
 
-fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec : HashMap<u8, [u16;9]>) {
+fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec : HashMap<u8, [u16;9]>, misc_text : String) {
     let trait_ids1 = trait_ids_by_spec[&build.specialization1];
     let trait_ids2 = trait_ids_by_spec[&build.specialization2];
     let trait_ids3 = trait_ids_by_spec[&build.specialization3];
 
     println!("\
+{misc}
 <div
   data-armory-embed='skills'
   data-armory-ids='{healing},{utility1},{utility2},{utility3},{elite}'
@@ -170,6 +249,7 @@ fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec :
 >
 </div>
 ",
+	misc=misc_text,
     healing=skills[0],
     utility1=skills[1],
     utility2=skills[2],
@@ -215,7 +295,7 @@ fn main() {
     let (chatcode, decorated) = fix_chatcode_decoration(input);
     println!("`{}`\n\n---\n", decorated);
 
-    let data = base64::decode(chatcode)
+    let data = BASE64.decode(chatcode)
         .expect("invaid base64");
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
@@ -228,7 +308,10 @@ fn main() {
     let skill_ids = get_skill_ids(&build);
     // println!("{:?}", skill_ids);
 
-    print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec);
+	let misc = get_misc_data_string(&build);
+    // println!("{:?}", misc);
+
+    print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec, misc.unwrap());
 }
 
 #[cfg(test)]
@@ -237,14 +320,40 @@ mod tests {
 
     #[test]
     fn trim_chatcode_decoration() {
-        let data = "[&123456]";
-        assert_eq!(remove_chatcode_decoration(data), "123456");
+        let data = "[&123456]".to_string();
+        assert_eq!(fix_chatcode_decoration(&data), ("123456".to_string(), "[&123456]".to_string()));
     }
 
     #[test]
     fn non_chatcode_no_trim() {
-        let data = "123456";
-        assert_eq!(remove_chatcode_decoration(data), "123456");
+        let data = "123456".to_string();
+        assert_eq!(fix_chatcode_decoration(&data), ("123456".to_string(), "[&123456]".to_string()));
     }
+
+	#[test]
+	fn ranger_code_to_pet_string() {
+		let input  = "[&DQQePQgaSDd5AHgAARuWAbUAmgCsAbgADxvtAC87KhUAAAAAAAAAAAAAAAA=]".to_string();
+		let (chatcode, decorated) = fix_chatcode_decoration(&input);
+
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(get_misc_data_string(&build).unwrap(), "Pets: Juvenile Tiger / Juvenile Rock Gazelle".to_string());
+	}
+
+	#[test]
+	fn revenant_code_to_legend_string() {
+		let input  = "[&DQkOHQMmPzrcEdwRBhIGEisSKxLUEdQRyhHKEQUEAwLUESsSBhIGEisS1BE=]".to_string();
+		let (chatcode, decorated) = fix_chatcode_decoration(&input);
+
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858,'\n>\n</div>".to_string());
+	}
 }
 
