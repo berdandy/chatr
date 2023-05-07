@@ -333,7 +333,7 @@ mod tests {
 	#[test]
 	fn ranger_code_to_pet_string() {
 		let input  = "[&DQQePQgaSDd5AHgAARuWAbUAmgCsAbgADxvtAC87KhUAAAAAAAAAAAAAAAA=]".to_string();
-		let (chatcode, decorated) = fix_chatcode_decoration(&input);
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
         	.expect("invaid base64");
@@ -346,14 +346,14 @@ mod tests {
 	#[test]
 	fn revenant_code_to_legend_string() {
 		let input  = "[&DQkOHQMmPzrcEdwRBhIGEisSKxLUEdQRyhHKEQUEAwLUESsSBhIGEisS1BE=]".to_string();
-		let (chatcode, decorated) = fix_chatcode_decoration(&input);
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
         	.expect("invaid base64");
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858,'\n>\n</div>".to_string());
+		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858'\n>\n</div>".to_string());
 	}
 }
 
