@@ -47,7 +47,7 @@ The following instructions are only required if you wish to build chatr from sou
 ```
 winget install --id Git.Git
 winget install --id GitHub.cli
-gh repo clone accessibilitywars/chatr
+gh repo clone berdandy/chatr
 cd chatr; cargo build
 ```
 
@@ -59,7 +59,7 @@ _I like winget for a solid pre-installed package manager on Windows 11. See [her
 - And then...
 ```
 brew install git gh
-gh repo clone accessibilitywars/chatr
+gh repo clone berdandy/chatr
 cd chatr; cargo build
 ```
 
@@ -68,6 +68,6 @@ cd chatr; cargo build
 - install git, gh, rust (TODO: specific commands)
 - And then...
 ```
-gh repo clone accessibilitywars/chatr
+gh repo clone berdandy/chatr
 cd chatr; cargo build
 ```
