@@ -59,6 +59,36 @@ pub struct BuildTemplate {
     terrestrial_pet2_inactive_legend: u8,
     aquatic_pet1_active_legend: u8,
     aquatic_pet2_inactive_legend: u8,
+
+	// we don't use these, because we don't really care:
+	/*
+	profession_specific_byte1: u8,
+	profession_specific_byte2: u8,
+	profession_specific_byte3: u8,
+	profession_specific_byte4: u8,
+	profession_specific_byte5: u8,
+	profession_specific_byte6: u8,
+	profession_specific_byte7: u8,
+	profession_specific_byte8: u8,
+	profession_specific_byte9: u8,
+	profession_specific_byte10: u8,
+	profession_specific_byte11: u8,
+	profession_specific_byte12: u8,
+	*/
+
+	// secrets of the obscure:
+	/*
+	weapon_count: u8,
+	weapon1: u8,
+	weapon2_unused_prefix: u8,
+	weapon2: u8,
+	weapon3_unused_prefix: u8,
+	weapon3: u8,
+	weapon4_unused_prefix: u8,
+	weapon4: u8,
+
+	relic: u16,
+	*/
 }
 
 const PROFESSIONS: &'static [&str] = &[
@@ -120,23 +150,38 @@ fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Error> {
 fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, serde_json::Error> {
 	let mut pet_names = "Pets: ".to_string();
 
+	/*
+	println!("Checking pets:\n{:?}\n{:?}", 
+		format!("https://api.guildwars2.com/v2/pets/{}", pet1),
+		format!("https://api.guildwars2.com/v2/pets/{}", pet2)
+	);
+	*/
+
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}", pet1);
 	let pet_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
 	// println!("{:?}", pet_data);
 
 	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
-	// println!("{:?}", v);
+	// println!(">> {:?}", v);
 
-	pet_names += &String::from(v["name"].as_str().unwrap());
-	pet_names += " / ";
+	if v.as_object().expect("Invalid JSON Object").contains_key("name") {
+		pet_names += &String::from(v["name"].as_str().unwrap());
+	}
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}", pet2);
 	let pet2_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
 	// println!("{:?}", pet2_data);
 
 	let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
+	// println!(">> {:?}", v2);
 
-	pet_names += &String::from(v2["name"].as_str().unwrap());
+	if v2.as_object().expect("Invalid JSON Object").contains_key("name") {
+		// ie, both pets
+		if v.as_object().expect("Invalid JSON Object").contains_key("name") {
+			pet_names += " / ";
+		}
+		pet_names += &String::from(v2["name"].as_str().unwrap());
+	}
 
 	Ok(pet_names)
 }
@@ -145,9 +190,9 @@ fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_json::E
 	// get list of legends
 	let request_url = format!("https://api.guildwars2.com/v2/legends?v=2019-12-19T00:00:00Z");//, legend1);
 	let legend_name_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
-	// println!("{:?}", legend_data);
+	// println!("{:?}", legend_name_data);
 	let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
-	// println!("{:?}", v);
+	// println!("{:?}", legend_name_v);
 	let legend_names = legend_name_v.as_array().unwrap();
 	// println!("{:?}", legend_names);
 
@@ -286,12 +331,14 @@ fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, decora
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    if args.len() != 2 {
-        eprintln!("Usage: {} <chat-code>", args[0]);
+    if args.len() <= 1 || args.len() > 3 {	// optional -d
+        eprintln!("Usage: {} [-d] <chat-code>", args[0]);
         process::exit(1);
     }
 
-    let input = &args[1];
+	let debug_code = args[1] == "-d";
+
+    let input = &args[args.len()-1];
     let (chatcode, decorated) = fix_chatcode_decoration(input);
     println!("`{}`\n\n---\n", decorated);
 
@@ -300,7 +347,9 @@ fn main() {
 
     let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-    // eprintln!("DEBUG DUMP: {:?}", build);
+	if debug_code {
+		eprintln!("{:?}", build);
+	}
 
     let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3]).unwrap();
     // println!("{:?}", trait_ids_by_spec);
@@ -354,6 +403,32 @@ mod tests {
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
 		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858'\n>\n</div>".to_string());
+	}
+
+	#[test]
+	fn ranger_code_to_invalid_pet_string() {
+		let input  = "[&DQQILxk+BRsJEwAAvQAAALkAAADmEgAAtBIAADxAAAAAAAAAAAAAAAAAAAA=]".to_string();
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
+
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(get_misc_data_string(&build).unwrap(), "Pets: Juvenile Wallow".to_string());
+	}
+
+	#[test]
+	fn revenant_code_to_invalid_legend_string() {
+		let input  = "[&DQkDOg8qRQDcEQAABhIAACsSAADUEQAAyhEAAAIAAAAAAAAAAAAAAAAAAAA=]".to_string();
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
+
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28134'\n>\n</div>".to_string());
 	}
 }
 
