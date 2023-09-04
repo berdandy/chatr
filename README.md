@@ -32,11 +32,11 @@ Output:
 </div>
 ```
 
-Suitable for copy-pasting into a build webpage.
+Suitable for copy-pasting into a build webpage, or using with vim `read!`
 
 # Dev Setup (on fresh machine)
 
-The following instructions are only required if you wish to build chatr from source. If you're just downloading the release, this not not required. Chatr just needs to be your PATH or current directory (for windows)
+The following instructions are only required if you wish to build chatr from source. If you're just downloading the release, this is not required. Chatr just needs to be your PATH or current directory (for windows)
 
 ## Windows 10/11 (winget):
 
