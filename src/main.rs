@@ -5,9 +5,58 @@ use std::collections::HashMap;
 use base64::engine::Engine as _;
 use base64::engine::general_purpose::STANDARD as BASE64;
 
+use deku::bitvec::{BitSlice, Msb0};
 use deku::prelude::*;
 
-// see cpp reference doc
+// see docs/build_template_reference.cpp
+
+#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+pub struct PalettePair {
+	terrestrial: u16,
+	aquatic: u16,
+}
+
+#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+struct InactiveLegendUtilitiesTriple {
+	utilities: [u16; 3]
+}
+
+#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+pub struct InactiveLegendUtilities {
+	terrestrial: InactiveLegendUtilitiesTriple,
+	aquatic: InactiveLegendUtilitiesTriple,
+}
+
+// new with SotO
+#[derive(Debug, PartialEq, Default, DekuRead, DekuWrite)]
+pub struct WeaponMastery {
+    #[deku(update = "self.weapon_palette_ids.len()")]
+    weapon_palette_count: u8,
+    #[deku(count = "weapon_palette_count")]
+    weapon_palette_ids: Vec<u16>,
+
+    #[deku(update = "self.weapon_variant_skill_ids.len()")]
+    weapon_variant_skill_count: u8,
+    #[deku(count = "weapon_variant_skill_count")]
+    weapon_variant_skill_ids: Vec<u32>,
+}
+
+// if there's trailing SotO weapon data in the chat code, this will handle it
+impl WeaponMastery {
+    fn optional_read(
+        rest: &BitSlice<u8, Msb0>,
+    ) -> Result<(&BitSlice<u8, Msb0>, WeaponMastery), DekuError> {
+		match rest.is_empty() {
+			true => {
+				Ok((rest, Default::default()))
+			}
+			false => {
+				Ok(WeaponMastery::read(rest, ())?)
+			}
+		}
+    }
+}
+
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 pub struct BuildTemplate {
     magic: u8,              // must be 0xD
@@ -43,52 +92,26 @@ pub struct BuildTemplate {
     #[deku(bits = "2")]
     trait_adept_3: u8,
 
-    terrestrial_healing_skill_palette: u16,
-    aquatic_healing_skill_palette: u16,
-    terrestrial_utility_skill_palette_1: u16,
-    aquatic_utility_skill_palette_1: u16,
-    terrestrial_utility_skill_palette_2: u16,
-    aquatic_utility_skill_palette_2: u16,
-    terrestrial_utility_skill_palette_3: u16,
-    aquatic_utility_skill_palette_3: u16,
-    terrestrial_elite_skill_palette: u16,
-    aquatic_elite_skill_palette: u16,
+	healing: PalettePair,      	// 4B
+	utility: [PalettePair; 3], 	// 12B
+	elite: PalettePair,			// 4B
 
-    // only valid if ranger (profession==4) or revenant (profession==9)
+    // only valid contents if ranger (profession==4) or revenant (profession==9), otherwise forcibly zero out
+    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
     terrestrial_pet1_active_legend: u8,
+    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
     terrestrial_pet2_inactive_legend: u8,
+    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
     aquatic_pet1_active_legend: u8,
+    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
     aquatic_pet2_inactive_legend: u8,
 
-	// we don't use these, because we don't really care:
-	/*
-	profession_specific_byte1: u8,
-	profession_specific_byte2: u8,
-	profession_specific_byte3: u8,
-	profession_specific_byte4: u8,
-	profession_specific_byte5: u8,
-	profession_specific_byte6: u8,
-	profession_specific_byte7: u8,
-	profession_specific_byte8: u8,
-	profession_specific_byte9: u8,
-	profession_specific_byte10: u8,
-	profession_specific_byte11: u8,
-	profession_specific_byte12: u8,
-	*/
+	// on a revenant, these 12 bytes preserves skill order for inactive legend utilities; ignored otherwise but always present
+	inactive_legend_utilities: InactiveLegendUtilities,
 
-	// secrets of the obscure:
-	/*
-	weapon_count: u8,
-	weapon1: u8,
-	weapon2_unused_prefix: u8,
-	weapon2: u8,
-	weapon3_unused_prefix: u8,
-	weapon3: u8,
-	weapon4_unused_prefix: u8,
-	weapon4: u8,
-
-	relic: u16,
-	*/
+	// post-SotO, chat codes may have optional additional data on read
+    #[deku(reader = "WeaponMastery::optional_read(deku::rest)")]
+	weapons: WeaponMastery,
 }
 
 const PROFESSIONS: &'static [&str] = &[
@@ -128,11 +151,11 @@ fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Error> {
     // println!("{:?}", skill_palette_map);
 
     let skills: [u16 ; 5] = [
-        skill_palette_map[&build.terrestrial_healing_skill_palette],
-        skill_palette_map[&build.terrestrial_utility_skill_palette_1],
-        skill_palette_map[&build.terrestrial_utility_skill_palette_2],
-        skill_palette_map[&build.terrestrial_utility_skill_palette_3],
-        skill_palette_map[&build.terrestrial_elite_skill_palette],
+        skill_palette_map[&build.healing.terrestrial],
+        skill_palette_map[&build.utility[0].terrestrial],
+        skill_palette_map[&build.utility[1].terrestrial],
+        skill_palette_map[&build.utility[2].terrestrial],
+        skill_palette_map[&build.elite.terrestrial],
     ];
     Ok(skills)
 }
@@ -332,7 +355,7 @@ fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, decora
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() <= 1 || args.len() > 3 {	// optional -d
-        eprintln!("Usage: {} [-d] <chat-code>", args[0]);
+        println!("Usage: {} [-d] <chat-code>", args[0]);
         process::exit(1);
     }
 
@@ -430,5 +453,32 @@ mod tests {
 
 		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28134'\n>\n</div>".to_string());
 	}
+
+	#[test]
+	fn long_soto_chatcode() {
+		// this is a chat code with ranger hammer variants (soto undocumented feature)
+			// 2,				// count
+			// 51, 0, 35, 0,	// 2 weapon palettes (u16)
+			// 
+			// 4,			    // count
+			// 103, 247, 0, 0, 	// 4 weapon variants (u32)
+			// 221, 246, 0, 0,
+			// 155, 246, 0, 0,
+			// 232, 246, 0, 0
+		let input = "[&DQQZGggqHiYlD3kAvQAAALkAAAC8AAAAlwEAABYAAAAAAAAAAAAAAAAAAAACMwAjAARn9wAA3fYAAJv2AADo9gAA]".to_string();
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
+		
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(build.profession, 4);
+		assert_eq!(build.weapons.weapon_palette_count, 2);
+		assert_eq!(build.weapons.weapon_palette_ids, vec!(51_u16, 35_u16));
+		assert_eq!(build.weapons.weapon_variant_skill_count, 4);
+		assert_eq!(build.weapons.weapon_variant_skill_ids, vec!(63335_u32, 63197_u32, 63131_u32, 63208_u32));
+	}
+
 }
 

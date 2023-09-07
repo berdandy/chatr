@@ -83,4 +83,10 @@ struct BuildChatLink
             std::uint16_t inactiveAquaticLegendUtilitySkillPalette3;
         } revenant;
     };
+	
+	// additional data from SotO goes here
+	// u8 count of weapon palettes
+	// u16 little endian weapon palette id (no api endpoint) [multiple; count]
+	// u8 count of weapon variants
+	// u32 little endian skill id [multiple; count]
 };
