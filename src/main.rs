@@ -219,9 +219,12 @@ fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_json::E
 	let legend_names = legend_name_v.as_array().unwrap();
 	// println!("{:?}", legend_names);
 
+	let mut skill_output = "".to_string();
+
 	let mut first = true;
 	let mut output = "<div
   data-armory-embed='skills'
+  data-armory-nokey=true
   data-armory-ids='".to_string();
 	for legend in legend_names {
 		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=2019-12-19T00:00:00Z", legend.as_str().unwrap());
@@ -240,15 +243,26 @@ fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_json::E
 			} else {
 				output += &format!(",{}", swap).to_string();
 			}
+
+			skill_output += "<div data-armory-embed='skills' data-armory-ids='";
+				skill_output += &format!("{},", v["heal"].as_u64().unwrap());
+				let utils = v["utilities"].as_array().unwrap();
+				for util in utils {
+					skill_output += &format!("{},", util.as_u64().unwrap());
+				}
+				skill_output += &format!("{}", v["elite"].as_u64().unwrap());
+			
+			skill_output += "'></div>";
 		}
 	}
 	output += &"'
 >
 </div>".to_string();
 
+
 	// println!("{:?}", output);
 
-	Ok(output)
+	Ok(output + &skill_output)
 }
 
 // only non-empty if ranger (profession==4) or revenant (profession==9)
@@ -301,6 +315,7 @@ fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec :
     let trait_ids2 = trait_ids_by_spec[&build.specialization2];
     let trait_ids3 = trait_ids_by_spec[&build.specialization3];
 
+	if build.profession != 9 {
     println!("\
 {misc}
 <div
@@ -336,6 +351,33 @@ fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec :
 	trait32=trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
 	trait33=trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
 );
+	} else {
+    println!("\
+{misc}
+<div
+  data-armory-embed='specializations'
+  data-armory-ids='{spec1},{spec2},{spec3}'
+  data-armory-{spec1}-traits='{trait11},{trait12},{trait13}'
+  data-armory-{spec2}-traits='{trait21},{trait22},{trait23}'
+  data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'
+>
+</div>
+",
+	misc=misc_text,
+	spec1=&build.specialization1,
+	spec2=&build.specialization2,
+	spec3=&build.specialization3,
+    trait11=trait_ids1[(build.trait_adept_1 - 1) as usize],
+	trait12=trait_ids1[(build.trait_master_1 + 3 - 1) as usize],
+	trait13=trait_ids1[(build.trait_grandmaster_1 + 6 - 1) as usize],
+	trait21=trait_ids2[(build.trait_adept_2 - 1) as usize],
+	trait22=trait_ids2[(build.trait_master_2 + 3 - 1) as usize],
+	trait23=trait_ids2[(build.trait_grandmaster_2 + 6 - 1) as usize],
+	trait31=trait_ids3[(build.trait_adept_3 - 1) as usize],
+	trait32=trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
+	trait33=trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
+);
+	}
 }
 
 fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, decorated
@@ -383,7 +425,7 @@ fn main() {
 	let misc = get_misc_data_string(&build);
     // println!("{:?}", misc);
 
-    print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec, misc.unwrap());
+	print_armory_code(build, skill_ids.unwrap(), trait_ids_by_spec, misc.unwrap());
 }
 
 #[cfg(test)]
@@ -425,7 +467,7 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858'\n>\n</div>".to_string());
+		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28494,41858'\n>\n</div><div data-armory-embed='skills' data-armory-ids='28219,27322,27505,27917,28287'></div><div data-armory-embed='skills' data-armory-ids='45686,42949,40485,41220,45773'></div>".to_string());
 	}
 
 	#[test]
@@ -451,7 +493,8 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28134'\n>\n</div>".to_string());
+		// this should omit the broken legend in the output
+		assert_eq!(get_misc_data_string(&build).unwrap(), "<div\n  data-armory-embed='skills'\n  data-armory-ids='28134'\n>\n</div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>".to_string());
 	}
 
 	#[test]
