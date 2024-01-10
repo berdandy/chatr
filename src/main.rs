@@ -27,7 +27,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let (_rest, build) = chatbuildr::BuildTemplate::from_bytes((data.as_ref(), 0))?;
 
     if debug_code {
-        eprintln!("{:?}", build);
+        eprintln!("Decoded:\n{:?}\n", build);
+        eprintln!("Skills:\n{:?} \n", chatbuildr::get_skill_ids(&build)?);
     }
 
     println!("{:?}", chatbuildr::armory_markup(build)?);

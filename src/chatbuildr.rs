@@ -289,7 +289,7 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 
     let misc_text = armory_misc_markup(&build)?;
 
-    // revenant has some additional markup
+    // revenant has legend skill overriding skills, so we only  use legend markup in misc
     let preamble_text = match build.profession {
         9 => format!("{misc}", misc=misc_text),
         _ => format!(concat!("{misc}",
