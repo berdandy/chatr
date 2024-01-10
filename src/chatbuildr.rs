@@ -6,6 +6,7 @@ use deku::prelude::*;
 
 // see docs/build_template_reference.cpp
 
+/// 16-bit skill palette pairs
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct PalettePair {
@@ -26,6 +27,7 @@ pub struct InactiveLegendUtilities {
 	aquatic: InactiveLegendUtilitiesTriple,
 }
 
+/// weapon mastery variant data. Currently only used in-game with non-untamed ranger builds wielding hammer
 // new with SotO
 #[derive(Debug, PartialEq, Default, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian", ctx_default = "deku::ctx::Endian::Little")]
@@ -41,7 +43,7 @@ pub struct WeaponMastery {
     weapon_variant_skill_ids: Vec<u32>,
 }
 
-// if there's trailing SotO weapon data in the chat code, this will handle it
+/// optionally handle trailing weapon variant data
 impl WeaponMastery {
     fn optional_read(
         rest: &BitSlice<u8, Msb0>,
@@ -57,6 +59,7 @@ impl WeaponMastery {
     }
 }
 
+/// data structure for build templates, as extracted from chat codes
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 pub struct BuildTemplate {
@@ -121,10 +124,12 @@ const PROFESSIONS: &'static [&str] = &[
     "Revenant"
   ];
 
+/// Extract skill ids from BuildTemplate
+///
+/// skills:
+///   build contains palette ids
+///   palette ids are mapped to ability ids via https://api.guildwars2.com/v2/professions/{PROFESSIONS[build.profession]}
 pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> {
-    // skills:
-    //   build contains palette ids
-    //   palette ids are mapped to ability ids via https://api.guildwars2.com/v2/professions/{PROFESSIONS[build.profession]}
 
     let profession_id = PROFESSIONS[(build.profession - 1) as usize];
     let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=latest", profession_id);
@@ -152,17 +157,13 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
     Ok(skills)
 }
 
-// ranger: https://api.guildwars2.com/v2/pets/{}
-// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
-//   a link to a png file for `icon`. We can render that. Also a caption for the pet `name` just to
-//   be clear about things.
-//
-// revenant: https://api.guildwars2.com/v2/legends/Legend{}
-// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
-//   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
-//   revenant. Players can't change them.
-
-pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
+/// Get Ranger Pet markup
+///
+/// ranger: https://api.guildwars2.com/v2/pets/{}
+///
+/// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
+///   a link to a png file for `icon`. We can render that in addition to the caption for the pet `name`
+pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 	let mut pet_names = "Pets: ".to_string();
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet1);
@@ -188,7 +189,14 @@ pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 	Ok(pet_names)
 }
 
-pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
+/// Get Revenant Legend markup
+///
+/// revenant: https://api.guildwars2.com/v2/legends/Legend{}
+///
+/// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
+///   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
+///   revenant. Players can't change them.
+pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
 	// get list of legends
 	let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
 	let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
@@ -231,14 +239,15 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn E
 	Ok(output + &skill_output)
 }
 
-// additional information
-// only non-empty if ranger (profession==4) or revenant (profession==9)
-//  ranger: pet names
-//  revenant: legend armory markup
-pub fn get_misc_data_string(build: &BuildTemplate) -> Result<String, Box<dyn Error>> {
+/// additional markup for rangers & revenants
+/// 
+/// only non-empty if ranger (profession==4) or revenant (profession==9)
+///  ranger: pet names
+///  revenant: legend armory markup
+pub fn armory_misc_markup(build: &BuildTemplate) -> Result<String, Box<dyn Error>> {
 	match build.profession {
-		4 => get_ranger_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
-		9 => get_revenant_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
+		4 => armory_pet_markup(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
+		9 => armory_legend_markup(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
 		_ => Ok(String::new())
 	}
 }
@@ -278,7 +287,7 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
     let trait_ids2 = trait_ids_by_spec[&build.specialization2];
     let trait_ids3 = trait_ids_by_spec[&build.specialization3];
 
-	let misc_text = get_misc_data_string(&build)?;
+	let misc_text = armory_misc_markup(&build)?;
 
 	// revenant has some additional markup
 	let preamble = match build.profession {
@@ -369,7 +378,7 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "Pets: Juvenile Tiger / Juvenile Rock Gazelle".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), "Pets: Juvenile Tiger / Juvenile Rock Gazelle".to_string());
 	}
 
 	#[test]
@@ -382,7 +391,7 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28494,41858'></div><div data-armory-embed='skills' data-armory-ids='28219,27322,27505,27917,28287'></div><div data-armory-embed='skills' data-armory-ids='45686,42949,40485,41220,45773'></div>".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28494,41858'></div><div data-armory-embed='skills' data-armory-ids='28219,27322,27505,27917,28287'></div><div data-armory-embed='skills' data-armory-ids='45686,42949,40485,41220,45773'></div>".to_string());
 	}
 
 	#[test]
@@ -395,7 +404,7 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(get_misc_data_string(&build).unwrap(), "Pets: Juvenile Wallow".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), "Pets: Juvenile Wallow".to_string());
 	}
 
 	#[test]
@@ -409,7 +418,7 @@ mod tests {
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
 		// this should omit the broken legend in the output
-		assert_eq!(get_misc_data_string(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>".to_string());
 	}
 
 	#[test]
