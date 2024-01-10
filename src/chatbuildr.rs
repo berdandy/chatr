@@ -90,9 +90,9 @@ pub struct BuildTemplate {
     #[deku(bits = "2")]
     pub trait_adept_3: u8,
 
-	pub healing: PalettePair,      	// 4B
-	pub utility: [PalettePair; 3], 	// 12B
-	pub elite: PalettePair,			// 4B
+    pub healing: PalettePair,      	// 4B
+    pub utility: [PalettePair; 3], 	// 12B
+    pub elite: PalettePair,			// 4B
 
     // only valid contents if ranger (profession==4) or revenant (profession==9), otherwise forcibly zero out
     #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
@@ -104,12 +104,12 @@ pub struct BuildTemplate {
     #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
     pub aquatic_pet2_inactive_legend: u8,
 
-	// on a revenant, these 12 bytes preserves skill order for inactive legend utilities; ignored otherwise but always present
-	pub inactive_legend_utilities: InactiveLegendUtilities,
+    // on a revenant, these 12 bytes preserves skill order for inactive legend utilities; ignored otherwise but always present
+    pub inactive_legend_utilities: InactiveLegendUtilities,
 
-	// post-SotO, chat codes may have optional additional data on read
+    // post-SotO, chat codes may have optional additional data on read
     #[deku(reader = "WeaponMastery::optional_read(deku::rest)")]
-	pub weapons: WeaponMastery,
+    pub weapons: WeaponMastery,
 }
 
 const PROFESSIONS: &'static [&str] = &[
@@ -164,7 +164,7 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
 /// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
 ///   a link to a png file for `icon`. We can render that in addition to the caption for the pet `name`
 pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
-	let mut pet_names = "Pets: ".to_string();
+	let mut pet_names = String::from("Pets: ");
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet1);
 	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
@@ -203,10 +203,10 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
 	let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
 	let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
 
-	let mut skill_output = "".to_string();
+	let mut skill_output = String::new();
 
 	let mut first = true;
-	let mut output = "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='".to_string();
+	let mut output = String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='");
 	for legend in legend_names {
 		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().ok_or("invalid legend")?);
 		let legend_data  = reqwest::blocking::get(request_url)?.text()?;
@@ -217,10 +217,10 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
 		if code == legend1 || code == legend2 {
 			let swap = v["swap"].as_u64().expect("integer"); 
 			if first {
-				output += &format!("{}", swap).to_string();
+				output += &String::from(format!("{}", swap));
 				first = false;
 			} else {
-				output += &format!(",{}", swap).to_string();
+				output += &String::from(format!(",{}", swap));
 			}
 
 			skill_output += "<div data-armory-embed='skills' data-armory-ids='";
@@ -234,7 +234,7 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
 			skill_output += "'></div>";
 		}
 	}
-	output += &"'></div>".to_string();
+	output += &String::from("'></div>");
 
 	Ok(output + &skill_output)
 }
@@ -290,8 +290,9 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 	let misc_text = armory_misc_markup(&build)?;
 
 	// revenant has some additional markup
-	let preamble = match build.profession {
-		9 => format!(concat!("{misc}",
+	let preamble_text = match build.profession {
+		9 => format!("{misc}", misc=misc_text),
+		_ => format!(concat!("{misc}",
 				"<div ",
 				  "data-armory-embed='skills' ",
 				  "data-armory-ids='{healing},{utility1},{utility2},{utility3},{elite}'",
@@ -303,8 +304,7 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 			utility2=skills[2],
 			utility3=skills[3],
 			elite=skills[4]
-		),
-		_ => format!("{misc}", misc=misc_text)
+		)
 	};
 
 	let markup = format!(concat!("{preamble}",
@@ -316,7 +316,7 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 		  "data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'",
 		">",
 		"</div>"),
-		preamble=preamble,
+		preamble=preamble_text,
 		spec1=&build.specialization1,
 		spec2=&build.specialization2,
 		spec3=&build.specialization3,
@@ -342,10 +342,10 @@ pub fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, de
 		raw.next();
 		raw.next_back();
 
-        return (String::from(raw.as_str()), input.to_string())
+        return (String::from(raw.as_str()), String::from(input))
     } else {
 		let decorated = format!("[&{}]", input);
-		return (input.to_string(), decorated.to_string())
+		return (String::from(input), String::from(decorated))
 	}
 }
 
@@ -358,19 +358,32 @@ mod tests {
 
     #[test]
     fn trim_chatcode_decoration() {
-        let data = "[&123456]".to_string();
-        assert_eq!(fix_chatcode_decoration(&data), ("123456".to_string(), "[&123456]".to_string()));
+        let data = String::from("[&123456]");
+        assert_eq!(fix_chatcode_decoration(&data), (String::from("123456"), String::from("[&123456]")));
     }
 
     #[test]
     fn non_chatcode_no_trim() {
-        let data = "123456".to_string();
-        assert_eq!(fix_chatcode_decoration(&data), ("123456".to_string(), "[&123456]".to_string()));
+        let data = String::from("123456");
+        assert_eq!(fix_chatcode_decoration(&data), (String::from("123456"), String::from("[&123456]")));
+    }
+
+    #[test]
+    fn chatcode_to_armory_markup() {
+		let input = String::from("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
+		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
+
+		let data = BASE64.decode(chatcode)
+        	.expect("invaid base64");
+
+		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+
+		assert_eq!(armory_markup(build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-ids='5503,5542,5570,5571,5666'></div><div data-armory-embed='specializations' data-armory-ids='41,37,56' data-armory-41-traits='232,214,226' data-armory-37-traits='266,257,1511' data-armory-56-traits='2115,2170,2138'></div>"));
     }
 
 	#[test]
 	fn ranger_code_to_pet_string() {
-		let input  = "[&DQQePQgaSDd5AHgAARuWAbUAmgCsAbgADxvtAC87KhUAAAAAAAAAAAAAAAA=]".to_string();
+		let input  = String::from("[&DQQePQgaSDd5AHgAARuWAbUAmgCsAbgADxvtAC87KhUAAAAAAAAAAAAAAAA=]");
 		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
@@ -378,12 +391,12 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(armory_misc_markup(&build).unwrap(), "Pets: Juvenile Tiger / Juvenile Rock Gazelle".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), String::from("Pets: Juvenile Tiger / Juvenile Rock Gazelle"));
 	}
 
 	#[test]
 	fn revenant_code_to_legend_string() {
-		let input  = "[&DQkOHQMmPzrcEdwRBhIGEisSKxLUEdQRyhHKEQUEAwLUESsSBhIGEisS1BE=]".to_string();
+		let input  = String::from("[&DQkOHQMmPzrcEdwRBhIGEisSKxLUEdQRyhHKEQUEAwLUESsSBhIGEisS1BE=]");
 		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
@@ -391,12 +404,12 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(armory_misc_markup(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28494,41858'></div><div data-armory-embed='skills' data-armory-ids='28219,27322,27505,27917,28287'></div><div data-armory-embed='skills' data-armory-ids='45686,42949,40485,41220,45773'></div>".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28494,41858'></div><div data-armory-embed='skills' data-armory-ids='28219,27322,27505,27917,28287'></div><div data-armory-embed='skills' data-armory-ids='45686,42949,40485,41220,45773'></div>"));
 	}
 
 	#[test]
 	fn ranger_code_to_invalid_pet_string() {
-		let input  = "[&DQQILxk+BRsJEwAAvQAAALkAAADmEgAAtBIAADxAAAAAAAAAAAAAAAAAAAA=]".to_string();
+		let input  = String::from("[&DQQILxk+BRsJEwAAvQAAALkAAADmEgAAtBIAADxAAAAAAAAAAAAAAAAAAAA=]");
 		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
@@ -404,12 +417,12 @@ mod tests {
 
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-		assert_eq!(armory_misc_markup(&build).unwrap(), "Pets: Juvenile Wallow".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), String::from("Pets: Juvenile Wallow"));
 	}
 
 	#[test]
 	fn revenant_code_to_invalid_legend_string() {
-		let input  = "[&DQkDOg8qRQDcEQAABhIAACsSAADUEQAAyhEAAAIAAAAAAAAAAAAAAAAAAAA=]".to_string();
+		let input  = String::from("[&DQkDOg8qRQDcEQAABhIAACsSAADUEQAAyhEAAAIAAAAAAAAAAAAAAAAAAAA=]");
 		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 
 		let data = BASE64.decode(chatcode)
@@ -418,7 +431,7 @@ mod tests {
 		let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
 		// this should omit the broken legend in the output
-		assert_eq!(armory_misc_markup(&build).unwrap(), "<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>".to_string());
+		assert_eq!(armory_misc_markup(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>"));
 	}
 
 	#[test]
@@ -432,7 +445,7 @@ mod tests {
 			// 221, 246, 0, 0,
 			// 155, 246, 0, 0,
 			// 232, 246, 0, 0
-		let input = "[&DQQZGggqHiYlD3kAvQAAALkAAAC8AAAAlwEAABYAAAAAAAAAAAAAAAAAAAACMwAjAARn9wAA3fYAAJv2AADo9gAA]".to_string();
+		let input = String::from("[&DQQZGggqHiYlD3kAvQAAALkAAAC8AAAAlwEAABYAAAAAAAAAAAAAAAAAAAACMwAjAARn9wAA3fYAAJv2AADo9gAA]");
 		let (chatcode, _decorated) = fix_chatcode_decoration(&input);
 		
 		let data = BASE64.decode(chatcode)
