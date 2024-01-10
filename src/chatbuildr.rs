@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 use std::error::Error;
 
@@ -8,17 +7,20 @@ use deku::prelude::*;
 // see docs/build_template_reference.cpp
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct PalettePair {
 	terrestrial: u16,
 	aquatic: u16,
 }
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 struct InactiveLegendUtilitiesTriple {
 	utilities: [u16; 3]
 }
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct InactiveLegendUtilities {
 	terrestrial: InactiveLegendUtilitiesTriple,
 	aquatic: InactiveLegendUtilitiesTriple,
@@ -26,6 +28,7 @@ pub struct InactiveLegendUtilities {
 
 // new with SotO
 #[derive(Debug, PartialEq, Default, DekuRead, DekuWrite)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian", ctx_default = "deku::ctx::Endian::Little")]
 pub struct WeaponMastery {
     #[deku(update = "self.weapon_palette_ids.len()")]
     weapon_palette_count: u8,
@@ -55,14 +58,13 @@ impl WeaponMastery {
 }
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "little")]
 pub struct BuildTemplate {
     magic: u8,              // must be 0xD
     pub profession: u8,         // 0-based, IDs on API are 1-based
 
     pub specialization1: u8,
-    #[deku(bits = "2")]
-    trait_padding_1: u8,
-    #[deku(bits = "2")]
+    #[deku(bits = "2", pad_bits_before = "2")]
     pub trait_grandmaster_1: u8,
     #[deku(bits = "2")]
     pub trait_master_1: u8,
@@ -70,9 +72,7 @@ pub struct BuildTemplate {
     pub trait_adept_1: u8,
 
     pub specialization2: u8,
-    #[deku(bits = "2")]
-    trait_padding_2: u8,
-    #[deku(bits = "2")]
+    #[deku(bits = "2", pad_bits_before = "2")]
     pub trait_grandmaster_2: u8,
     #[deku(bits = "2")]
     pub trait_master_2: u8,
@@ -80,9 +80,7 @@ pub struct BuildTemplate {
     pub trait_adept_2: u8,
 
     pub specialization3: u8,
-    #[deku(bits = "2")]
-    trait_padding_3: u8,
-    #[deku(bits = "2")]
+    #[deku(bits = "2", pad_bits_before = "2")]
     pub trait_grandmaster_3: u8,
     #[deku(bits = "2")]
     pub trait_master_3: u8,
