@@ -30,16 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 		eprintln!("{:?}", build);
 	}
 
-    let trait_ids_by_spec = chatbuildr::get_trait_ids([build.specialization1, build.specialization2, build.specialization3])?;
-    // println!("{:?}", trait_ids_by_spec);
-
-    let skill_ids = chatbuildr::get_skill_ids(&build);
-    // println!("{:?}", skill_ids);
-
-	let misc = chatbuildr::get_misc_data_string(&build);
-    // println!("{:?}", misc);
-
-	chatbuildr::print_armory_code(build, skill_ids?, trait_ids_by_spec, misc?);
+	println!("{:?}", chatbuildr::armory_markup(build)?);
 
 	Ok(())
 }
