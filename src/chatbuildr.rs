@@ -129,12 +129,10 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
     let profession_id = PROFESSIONS[(build.profession - 1) as usize];
     let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=latest", profession_id);
     let palette_data = reqwest::blocking::get(request_url)?.text()?;
-    // println!("{:?}", palette_data);
 
     // Parse the string of data into serde_json::Value.
     let v: serde_json::Value = serde_json::from_str(&palette_data)?;
     let a = v["skills_by_palette"].as_array().ok_or("skills_by_palette issue")?;
-    // println!("{:?}", a);
     let mut skill_palette_map = HashMap::new();
     for mapping in a {
         let skills_by_palette = mapping.as_array().ok_or("invalid mapping in skills_by_palette")?;
@@ -143,7 +141,6 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
             skills_by_palette[1].as_u64().expect("integer") as u16
         );
     }
-    // println!("{:?}", skill_palette_map);
 
     let skills: [u16 ; 5] = [
         skill_palette_map[&build.healing.terrestrial],
@@ -168,31 +165,18 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
 pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 	let mut pet_names = "Pets: ".to_string();
 
-	/*
-	println!("Checking pets:\n{:?}\n{:?}", 
-		format!("https://api.guildwars2.com/v2/pets/{}", pet1),
-		format!("https://api.guildwars2.com/v2/pets/{}", pet2)
-	);
-	*/
-
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet1);
 	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
-	// println!("{:?}", pet_data);
 
 	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
-	// println!(">> {:?}", v);
-
 	if v.as_object().expect("Invalid JSON Object").contains_key("name") {
 		pet_names += &String::from(v["name"].as_str().expect("invalid pet1 name"));
 	}
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet2);
 	let pet2_data  = reqwest::blocking::get(request_url)?.text()?;
-	// println!("{:?}", pet2_data);
 
 	let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
-	// println!(">> {:?}", v2);
-
 	if v2.as_object().expect("Invalid JSON Object").contains_key("name") {
 		// ie, both pets
 		if v.as_object().expect("Invalid JSON Object").contains_key("name") {
@@ -208,11 +192,8 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn E
 	// get list of legends
 	let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
 	let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
-	// println!("{:?}", legend_name_data);
 	let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
-	// println!("{:?}", legend_name_v);
 	let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
-	// println!("{:?}", legend_names);
 
 	let mut skill_output = "".to_string();
 
@@ -223,11 +204,9 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn E
   data-armory-ids='".to_string();
 	for legend in legend_names {
 		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().ok_or("invalid legend")?);
-		// println!("{:?}", request_url);
 		let legend_data  = reqwest::blocking::get(request_url)?.text()?;
 		let v: serde_json::Value = serde_json::from_str(&legend_data)?;
 
-		// println!("{:?}", v);
 
 		let code = v["code"].as_u64().expect("integer") as u8;
 		if code == legend1 || code == legend2 {
@@ -254,9 +233,6 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn E
 >
 </div>".to_string();
 
-
-	// println!("{:?}", output);
-
 	Ok(output + &skill_output)
 }
 
@@ -275,7 +251,6 @@ pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, Box<dyn Er
     for spec_id in specs {
         let request_url = format!("https://api.guildwars2.com/v2/specializations/{}?v=latest", spec_id);
         let spec_data = reqwest::blocking::get(request_url)?.text()?;
-        // println!("{:?}", spec_data);
 
         // Parse the string of data into serde_json::Value.
         let v: serde_json::Value = serde_json::from_str(&spec_data)?;
@@ -295,15 +270,6 @@ pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, Box<dyn Er
 
     Ok(trait_map)
 }
-
-/*
-fn print_armory_code(build: BuildTemplate, skill_ids_by_palette : HashMap<u8, [u16;9]>) {
-<div
-    data-armory-embed='skills'
-    data-armory-ids='5857,5927,5912,5836,5868'
->
-</div>
-*/
 
 pub fn print_armory_code(build: BuildTemplate, skills: [u16; 5], trait_ids_by_spec : HashMap<u8, [u16;9]>, misc_text : String) {
     let trait_ids1 = trait_ids_by_spec[&build.specialization1];
