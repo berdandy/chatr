@@ -10,12 +10,12 @@ use std::process;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
-    if args.len() <= 1 || args.len() > 3 {	// optional -d
+    if args.len() <= 1 || args.len() > 3 {  // optional -d
         println!("Usage: {} [-d] <chat-code>", args[0]);
         process::exit(1);
     }
 
-	let debug_code = args[1] == "-d";
+    let debug_code = args[1] == "-d";
 
     let input = &args[args.len()-1];
     let (chatcode, decorated) = chatbuildr::fix_chatcode_decoration(input);
@@ -26,11 +26,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let (_rest, build) = chatbuildr::BuildTemplate::from_bytes((data.as_ref(), 0))?;
 
-	if debug_code {
-		eprintln!("{:?}", build);
-	}
+    if debug_code {
+        eprintln!("{:?}", build);
+    }
 
-	println!("{:?}", chatbuildr::armory_markup(build)?);
+    println!("{:?}", chatbuildr::armory_markup(build)?);
 
-	Ok(())
+    Ok(())
 }
