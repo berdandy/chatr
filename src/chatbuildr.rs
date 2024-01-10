@@ -1,5 +1,6 @@
 
 use std::collections::HashMap;
+use std::error::Error;
 
 use deku::bitvec::{BitSlice, Msb0};
 use deku::prelude::*;
@@ -122,26 +123,26 @@ const PROFESSIONS: &'static [&str] = &[
     "Revenant"
   ];
 
-pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Error> {
+pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> {
     // skills:
     //   build contains palette ids
     //   palette ids are mapped to ability ids via https://api.guildwars2.com/v2/professions/{PROFESSIONS[build.profession]}
 
     let profession_id = PROFESSIONS[(build.profession - 1) as usize];
     let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=latest", profession_id);
-    let palette_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+    let palette_data = reqwest::blocking::get(request_url)?.text()?;
     // println!("{:?}", palette_data);
 
     // Parse the string of data into serde_json::Value.
     let v: serde_json::Value = serde_json::from_str(&palette_data)?;
-    let a = v["skills_by_palette"].as_array().unwrap();
+    let a = v["skills_by_palette"].as_array().ok_or("skills_by_palette issue")?;
     // println!("{:?}", a);
     let mut skill_palette_map = HashMap::new();
     for mapping in a {
-        let skills_by_palette = mapping.as_array().unwrap();
+        let skills_by_palette = mapping.as_array().ok_or("invalid mapping in skills_by_palette")?;
         skill_palette_map.insert(
-            skills_by_palette[0].as_u64().unwrap() as u16,
-            skills_by_palette[1].as_u64().unwrap() as u16
+            skills_by_palette[0].as_u64().expect("integer") as u16,
+            skills_by_palette[1].as_u64().expect("integer") as u16
         );
     }
     // println!("{:?}", skill_palette_map);
@@ -166,7 +167,7 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], serde_json::Erro
 //   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
 //   revenant. Players can't change them.
 
-pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, serde_json::Error> {
+pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 	let mut pet_names = "Pets: ".to_string();
 
 	/*
@@ -177,18 +178,18 @@ pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, serde_json::Error
 	*/
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet1);
-	let pet_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
 	// println!("{:?}", pet_data);
 
 	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
 	// println!(">> {:?}", v);
 
 	if v.as_object().expect("Invalid JSON Object").contains_key("name") {
-		pet_names += &String::from(v["name"].as_str().unwrap());
+		pet_names += &String::from(v["name"].as_str().expect("invalid pet1 name"));
 	}
 
 	let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet2);
-	let pet2_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	let pet2_data  = reqwest::blocking::get(request_url)?.text()?;
 	// println!("{:?}", pet2_data);
 
 	let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
@@ -199,20 +200,20 @@ pub fn get_ranger_string(pet1: u8, pet2: u8) -> Result<String, serde_json::Error
 		if v.as_object().expect("Invalid JSON Object").contains_key("name") {
 			pet_names += " / ";
 		}
-		pet_names += &String::from(v2["name"].as_str().unwrap());
+		pet_names += &String::from(v2["name"].as_str().expect("invalid pet2 name"));
 	}
 
 	Ok(pet_names)
 }
 
-pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_json::Error> {
+pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
 	// get list of legends
-	let request_url = format!("https://api.guildwars2.com/v2/legends?v=2019-12-19T00:00:00Z");//, legend1);
-	let legend_name_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+	let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
+	let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
 	// println!("{:?}", legend_name_data);
 	let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
 	// println!("{:?}", legend_name_v);
-	let legend_names = legend_name_v.as_array().unwrap();
+	let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
 	// println!("{:?}", legend_names);
 
 	let mut skill_output = "".to_string();
@@ -223,16 +224,16 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_jso
   data-armory-nokey=true
   data-armory-ids='".to_string();
 	for legend in legend_names {
-		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().unwrap());
+		let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().ok_or("invalid legend")?);
 		// println!("{:?}", request_url);
-		let legend_data  = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+		let legend_data  = reqwest::blocking::get(request_url)?.text()?;
 		let v: serde_json::Value = serde_json::from_str(&legend_data)?;
 
 		// println!("{:?}", v);
 
-		let code = v["code"].as_u64().unwrap() as u8;
+		let code = v["code"].as_u64().expect("integer") as u8;
 		if code == legend1 || code == legend2 {
-			let swap = v["swap"].as_u64().unwrap(); 
+			let swap = v["swap"].as_u64().expect("integer"); 
 			if first {
 				output += &format!("{}", swap).to_string();
 				first = false;
@@ -241,12 +242,12 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_jso
 			}
 
 			skill_output += "<div data-armory-embed='skills' data-armory-ids='";
-				skill_output += &format!("{},", v["heal"].as_u64().unwrap());
-				let utils = v["utilities"].as_array().unwrap();
+				skill_output += &format!("{},", v["heal"].as_u64().expect("integer"));
+				let utils = v["utilities"].as_array().ok_or("invalid utilities")?;
 				for util in utils {
-					skill_output += &format!("{},", util.as_u64().unwrap());
+					skill_output += &format!("{},", util.as_u64().expect("integer"));
 				}
-				skill_output += &format!("{}", v["elite"].as_u64().unwrap());
+				skill_output += &format!("{}", v["elite"].as_u64().expect("integer"));
 			
 			skill_output += "'></div>";
 		}
@@ -262,7 +263,7 @@ pub fn get_revenant_string(legend1: u8, legend2: u8) -> Result<String, serde_jso
 }
 
 // only non-empty if ranger (profession==4) or revenant (profession==9)
-pub fn get_misc_data_string(build: &BuildTemplate) -> Result<String, serde_json::Error> {
+pub fn get_misc_data_string(build: &BuildTemplate) -> Result<String, Box<dyn Error>> {
 	match build.profession {
 		4 => get_ranger_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
 		9 => get_revenant_string(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
@@ -270,26 +271,26 @@ pub fn get_misc_data_string(build: &BuildTemplate) -> Result<String, serde_json:
 	}
 }
 
-pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, serde_json::Error> {
+pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, Box<dyn Error>> {
     let mut trait_map = HashMap::new();
 
     for spec_id in specs {
         let request_url = format!("https://api.guildwars2.com/v2/specializations/{}?v=latest", spec_id);
-        let spec_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+        let spec_data = reqwest::blocking::get(request_url)?.text()?;
         // println!("{:?}", spec_data);
 
         // Parse the string of data into serde_json::Value.
         let v: serde_json::Value = serde_json::from_str(&spec_data)?;
         let trait_ids: [u16; 9] = [
-            v["major_traits"][0].as_u64().unwrap() as u16,
-            v["major_traits"][1].as_u64().unwrap() as u16,
-            v["major_traits"][2].as_u64().unwrap() as u16,
-            v["major_traits"][3].as_u64().unwrap() as u16,
-            v["major_traits"][4].as_u64().unwrap() as u16,
-            v["major_traits"][5].as_u64().unwrap() as u16,
-            v["major_traits"][6].as_u64().unwrap() as u16,
-            v["major_traits"][7].as_u64().unwrap() as u16,
-            v["major_traits"][8].as_u64().unwrap() as u16
+            v["major_traits"][0].as_u64().expect("integer") as u16,
+            v["major_traits"][1].as_u64().expect("integer") as u16,
+            v["major_traits"][2].as_u64().expect("integer") as u16,
+            v["major_traits"][3].as_u64().expect("integer") as u16,
+            v["major_traits"][4].as_u64().expect("integer") as u16,
+            v["major_traits"][5].as_u64().expect("integer") as u16,
+            v["major_traits"][6].as_u64().expect("integer") as u16,
+            v["major_traits"][7].as_u64().expect("integer") as u16,
+            v["major_traits"][8].as_u64().expect("integer") as u16
         ];
         trait_map.insert(spec_id, trait_ids);
     }
