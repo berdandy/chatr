@@ -194,8 +194,9 @@ pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 /// revenant: https://api.guildwars2.com/v2/legends/Legend{}
 ///
 /// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
-///   `heal`, `elite` and an array for `utilities`. We can use that. Or just not bother at all for
-///   revenant. Players can't change them.
+///   `heal`, `elite` and an array for `utilities`.
+
+/// Note: Legend7 (Alliance) is missing. Probably because the skills are 'doubled'
 pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
     // get list of legends
     let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
@@ -211,7 +212,6 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
         let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().ok_or("invalid legend")?);
         let legend_data  = reqwest::blocking::get(request_url)?.text()?;
         let v: serde_json::Value = serde_json::from_str(&legend_data)?;
-
 
         let code = v["code"].as_u64().expect("integer") as u8;
         if code == legend1 || code == legend2 {
@@ -233,7 +233,18 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
             
             skill_output += "'></div>";
         }
+
     }
+
+	if 7 == legend1 || 7 == legend2 {
+		// garbage special case because Anet didn't put Alliance legend in the API
+		output += match first {
+			true => "62891",
+			false => ",62891"
+		};
+		skill_output += "<div data-armory-embed='skills' data-armory-ids='62719,62832,62962,62878,62942'></div>";
+	}
+
     output += &String::from("'></div>");
 
     Ok(output + &skill_output)
@@ -435,6 +446,18 @@ mod tests {
     }
 
     #[test]
+    fn revenant_handle_alliance_api_missing() {
+        let chatcode  = String::from("DQkDPg86RRncEdwRBhIrEisSBhLUEdQRyhHKEQcDAgMrEgYS1BEGEisS1BECWgAyAAA=");
+        let data = BASE64.decode(chatcode).expect("invaid base64");
+
+        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+        let result = armory_misc_markup(&build);
+
+        assert!(result.is_ok());
+        assert_eq!(armory_misc_markup(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>"));
+    }
+
+    #[test]
     fn long_soto_chatcode() {
         // this is a chat code with ranger hammer variants (soto undocumented feature)
             // 2,               // count
@@ -460,4 +483,3 @@ mod tests {
         assert_eq!(build.weapons.weapon_variant_skill_ids, vec!(63335_u32, 63197_u32, 63131_u32, 63208_u32));
     }
 }
-

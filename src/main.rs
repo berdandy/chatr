@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         eprintln!("Skills:\n{:?} \n", chatbuildr::get_skill_ids(&build)?);
     }
 
-    println!("{:?}", chatbuildr::armory_markup(build)?);
+    println!("{}", chatbuildr::armory_markup(build)?);
 
     Ok(())
 }
