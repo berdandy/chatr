@@ -4,8 +4,6 @@ use std::error::Error;
 use deku::bitvec::{BitSlice, Msb0};
 use deku::prelude::*;
 
-use serde::Deserialize;
-
 // see docs/build_template_reference.cpp
 
 /// 16-bit skill palette pairs
@@ -30,7 +28,7 @@ pub struct InactiveLegendUtilities {
 }
 
 /// weapon mastery variant data. Currently only used in-game with non-untamed ranger builds wielding hammer
-/// new with SotO
+// new with SotO
 #[derive(Debug, PartialEq, Default, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian", ctx_default = "deku::ctx::Endian::Little")]
 pub struct WeaponMastery {
@@ -126,13 +124,6 @@ const PROFESSIONS: &'static [&str] = &[
     "Revenant"
   ];
 
-#[serde_with::serde_as]
-#[derive(Deserialize)]
-struct SkillsByPalette {
-	#[serde_as(as = "Vec<(_, _)>")]
-	map: HashMap<u16, u16>
-}
-
 /// Extract skill ids from BuildTemplate
 ///
 /// skills:
@@ -144,14 +135,24 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
     let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=latest", profession_id);
     let palette_data = reqwest::blocking::get(request_url)?.text()?;
 
-    // Acquire skills_by_palette hashmap
-    let sbp: SkillsByPalette = serde_json::from_str(&palette_data)?;
+    // Parse the string of data into serde_json::Value.
+    let v: serde_json::Value = serde_json::from_str(&palette_data)?;
+    let a = v["skills_by_palette"].as_array().ok_or("skills_by_palette issue")?;
+    let mut skill_palette_map = HashMap::new();
+    for mapping in a {
+        let skills_by_palette = mapping.as_array().ok_or("invalid mapping in skills_by_palette")?;
+        skill_palette_map.insert(
+            skills_by_palette[0].as_u64().expect("integer") as u16,
+            skills_by_palette[1].as_u64().expect("integer") as u16
+        );
+    }
+
     let skills: [u16 ; 5] = [
-        sbp.map[&build.healing.terrestrial],
-        sbp.map[&build.utility[0].terrestrial],
-        sbp.map[&build.utility[1].terrestrial],
-        sbp.map[&build.utility[2].terrestrial],
-        sbp.map[&build.elite.terrestrial],
+        skill_palette_map[&build.healing.terrestrial],
+        skill_palette_map[&build.utility[0].terrestrial],
+        skill_palette_map[&build.utility[1].terrestrial],
+        skill_palette_map[&build.utility[2].terrestrial],
+        skill_palette_map[&build.elite.terrestrial],
     ];
     Ok(skills)
 }
