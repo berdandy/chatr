@@ -132,7 +132,7 @@ const PROFESSIONS: &'static [&str] = &[
 pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> {
 
     let profession_id = PROFESSIONS[(build.profession - 1) as usize];
-    let request_url = format!("https://api.guildwars2.com/v2/professions/{}?v=latest", profession_id);
+    let request_url = format!("https://api.guildwars2.com/v2/professions/{profession_id}?v=latest");
     let palette_data = reqwest::blocking::get(request_url)?.text()?;
 
     // Parse the string of data into serde_json::Value.
@@ -163,10 +163,12 @@ pub fn get_skill_ids(build: &BuildTemplate) -> Result<[u16; 5], Box<dyn Error>> 
 ///
 /// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
 ///   a link to a png file for `icon`. We can render that in addition to the caption for the pet `name`
+/// 
+/// TODO: use a single request with multiple ids
 pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
     let mut pet_names = String::from("Pets: ");
 
-    let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet1);
+    let request_url = format!("https://api.guildwars2.com/v2/pets/{pet1}?v=latest");
     let pet_data  = reqwest::blocking::get(request_url)?.text()?;
 
     let v: serde_json::Value = serde_json::from_str(&pet_data)?;
@@ -174,7 +176,7 @@ pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
         pet_names += &String::from(v["name"].as_str().expect("invalid pet1 name"));
     }
 
-    let request_url = format!("https://api.guildwars2.com/v2/pets/{}?v=latest", pet2);
+    let request_url = format!("https://api.guildwars2.com/v2/pets/{pet2}?v=latest");
     let pet2_data  = reqwest::blocking::get(request_url)?.text()?;
 
     let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
@@ -195,8 +197,8 @@ pub fn armory_pet_markup(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 ///
 /// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
 ///   `heal`, `elite` and an array for `utilities`.
-
 /// Note: Legend7 (Alliance) is missing. Probably because the skills are 'doubled'
+/// TODO: use a single request with all legend ids
 pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
     // get list of legends
     let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
@@ -217,10 +219,10 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
         if code == legend1 || code == legend2 {
             let swap = v["swap"].as_u64().expect("integer"); 
             if first {
-                output += &String::from(format!("{}", swap));
+                output += &String::from(format!("{swap}"));
                 first = false;
             } else {
-                output += &String::from(format!(",{}", swap));
+                output += &String::from(format!(",{swap}"));
             }
 
             skill_output += "<div data-armory-embed='skills' data-armory-ids='";
@@ -267,7 +269,7 @@ pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, Box<dyn Er
     let mut trait_map = HashMap::new();
 
     for spec_id in specs {
-        let request_url = format!("https://api.guildwars2.com/v2/specializations/{}?v=latest", spec_id);
+        let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=latest");
         let spec_data = reqwest::blocking::get(request_url)?.text()?;
 
         // Parse the string of data into serde_json::Value.
@@ -298,18 +300,18 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
     let trait_ids2 = trait_ids_by_spec[&build.specialization2];
     let trait_ids3 = trait_ids_by_spec[&build.specialization3];
 
-    let misc_text = armory_misc_markup(&build)?;
+    let misc = armory_misc_markup(&build)?;
 
     // revenant has legend skill overriding skills, so we only  use legend markup in misc
-    let preamble_text = match build.profession {
-        9 => format!("{misc}", misc=misc_text),
+    let preamble = match build.profession {
+        9 => format!("{misc}", misc=misc),
         _ => format!(concat!("{misc}",
                 "<div ",
                   "data-armory-embed='skills' ",
                   "data-armory-ids='{healing},{utility1},{utility2},{utility3},{elite}'",
                 ">",
                 "</div>"),
-            misc=misc_text,
+			misc=misc,
             healing=skills[0],
             utility1=skills[1],
             utility2=skills[2],
@@ -327,7 +329,7 @@ pub fn armory_markup(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
           "data-armory-{spec3}-traits='{trait31},{trait32},{trait33}'",
         ">",
         "</div>"),
-        preamble=preamble_text,
+		preamble=preamble,
         spec1=&build.specialization1,
         spec2=&build.specialization2,
         spec3=&build.specialization3,
@@ -355,7 +357,7 @@ pub fn fix_chatcode_decoration(input: &String) -> (String, String) { // code, de
 
         return (String::from(raw.as_str()), String::from(input))
     } else {
-        let decorated = format!("[&{}]", input);
+        let decorated = format!("[&{input}]");
         return (String::from(input), String::from(decorated))
     }
 }
@@ -454,7 +456,7 @@ mod tests {
         let result = armory_misc_markup(&build);
 
         assert!(result.is_ok());
-        assert_eq!(armory_misc_markup(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28134'></div><div data-armory-embed='skills' data-armory-ids='26937,29209,28231,27107,28406'></div>"));
+        assert_eq!(armory_misc_markup(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28419,62891'></div><div data-armory-embed='skills' data-armory-ids='27372,28516,26679,26557,27975'></div><div data-armory-embed='skills' data-armory-ids='62719,62832,62962,62878,62942'></div>"));
     }
 
     #[test]
