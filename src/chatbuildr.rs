@@ -59,6 +59,69 @@ impl WeaponMastery {
     }
 }
 
+/// TODO: enum-ify
+///    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+///    this is a failed experiment. I'm having issues passing both endianness and the profession
+///    in the context to use as an enum variant identifier. Maybe best to abandon, and attempt
+///    to rework BuildTemplate entirely without deku
+///    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/*
+#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
+pub struct MiscData {
+    // only valid contents if ranger (profession==4) or revenant (profession==9). TODO: those
+    // should be enum variants
+    pub terrestrial_pet1_active_legend: u8,
+    pub terrestrial_pet2_inactive_legend: u8,
+    pub aquatic_pet1_active_legend: u8,
+    pub aquatic_pet2_inactive_legend: u8,
+
+    // on a revenant, these 12 bytes preserves skill order for inactive legend utilities; ignored otherwise but always present
+    pub inactive_legend_utilities: InactiveLegendUtilities,
+}
+*/
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, PartialEq)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian, profession: u8")]
+pub struct PetMiscData {
+    #[deku(skip, default = "profession")] // workaround, see https://github.com/sharksforarms/deku/issues/305
+    profession: u8,
+
+    pub terrestrial_pet1: u8,
+    pub terrestrial_pet2: u8,
+    pub aquatic_pet1: u8,
+    #[deku(pad_bytes_after = "12")]
+    pub aquatic_pet2: u8,
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, PartialEq)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian, profession: u8")]
+pub struct LegendMiscData {
+    #[deku(skip, default = "profession")] // workaround, see https://github.com/sharksforarms/deku/issues/305
+    profession: u8,
+
+    pub terrestrial_active_legend: u8,
+    pub terrestrial_inactive_legend: u8,
+    pub aquatic_active_legend: u8,
+    pub aquatic_inactive_legend: u8,
+
+    pub inactive_legend_utilities: InactiveLegendUtilities,
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, PartialEq)]
+#[deku(endian = "endian", ctx = "endian: deku::ctx::Endian, profession: u8", id = "profession")]
+pub enum MiscData {
+    #[deku(id = "4")]
+    RangerMisc(PetMiscData),
+    #[deku(id = "9")]
+    RevenantMisc(LegendMiscData),
+    #[deku(id_pat = "_")]
+    Irrelevant([u8; 16]),
+}
+
 /// data structure for build templates, as extracted from chat codes
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
@@ -94,18 +157,8 @@ pub struct BuildTemplate {
     pub utility: [PalettePair; 3],  // 12B
     pub elite: PalettePair,         // 4B
 
-    // only valid contents if ranger (profession==4) or revenant (profession==9), otherwise forcibly zero out
-    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
-    pub terrestrial_pet1_active_legend: u8,
-    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
-    pub terrestrial_pet2_inactive_legend: u8,
-    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
-    pub aquatic_pet1_active_legend: u8,
-    #[deku(cond = "*profession == 4 || *profession == 9", default = "0")]
-    pub aquatic_pet2_inactive_legend: u8,
-
-    // on a revenant, these 12 bytes preserves skill order for inactive legend utilities; ignored otherwise but always present
-    pub inactive_legend_utilities: InactiveLegendUtilities,
+    #[deku(ctx = "*profession")]
+    pub misc: MiscData, // 16B
 
     // post-SotO, chat codes may have optional additional data on read
     #[deku(reader = "WeaponMastery::optional_read(deku::rest)")]
@@ -258,9 +311,9 @@ pub fn armory_legend_markup(legend1: u8, legend2: u8) -> Result<String, Box<dyn 
 ///  ranger: pet names
 ///  revenant: legend armory markup
 pub fn armory_misc_markup(build: &BuildTemplate) -> Result<String, Box<dyn Error>> {
-    match build.profession {
-        4 => armory_pet_markup(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
-        9 => armory_legend_markup(build.terrestrial_pet1_active_legend, build.terrestrial_pet2_inactive_legend),
+    match build.misc {
+        MiscData::RangerMisc(data) => armory_pet_markup(data.terrestrial_pet1, data.terrestrial_pet2),
+        MiscData::RevenantMisc(data) => armory_legend_markup(data.terrestrial_active_legend, data.terrestrial_inactive_legend),
         _ => Ok(String::new())
     }
 }
