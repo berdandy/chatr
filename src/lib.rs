@@ -1,3 +1,16 @@
+//! Chatr - Build Chat Codes for GW2
+//!
+//! # Examples
+//! ```
+//! use chatr::BuildTemplate;
+//!
+//! let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
+//!
+//! assert_eq!(build.profession, 6);
+//! assert_eq!(build.healing.terrestrial, 116);
+//! ```
+//!
+
 use std::collections::HashMap;
 use std::error::Error;
 
@@ -15,21 +28,21 @@ pub mod markup;
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct PalettePair {
-    terrestrial: u16,
-    aquatic: u16,
+    pub terrestrial: u16,
+    pub aquatic: u16,
 }
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
-struct InactiveLegendUtilitiesTriple {
-    utilities: [u16; 3]
+pub struct InactiveLegendUtilitiesTriple {
+    pub utilities: [u16; 3]
 }
 
 #[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct InactiveLegendUtilities {
-    terrestrial: InactiveLegendUtilitiesTriple,
-    aquatic: InactiveLegendUtilitiesTriple,
+    pub terrestrial: InactiveLegendUtilitiesTriple,
+    pub aquatic: InactiveLegendUtilitiesTriple,
 }
 
 /// weapon mastery variant data. Currently only used in-game with non-untamed ranger builds wielding hammer
@@ -38,14 +51,14 @@ pub struct InactiveLegendUtilities {
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian", ctx_default = "deku::ctx::Endian::Little")]
 pub struct WeaponMastery {
     #[deku(update = "self.weapon_palette_ids.len()")]
-    weapon_palette_count: u8,
+    pub weapon_palette_count: u8,
     #[deku(count = "weapon_palette_count")]
-    weapon_palette_ids: Vec<u16>,
+    pub weapon_palette_ids: Vec<u16>,
 
     #[deku(update = "self.weapon_variant_skill_ids.len()")]
-    weapon_variant_skill_count: u8,
+    pub weapon_variant_skill_count: u8,
     #[deku(count = "weapon_variant_skill_count")]
-    weapon_variant_skill_ids: Vec<u32>,
+    pub weapon_variant_skill_ids: Vec<u32>,
 }
 
 /// optionally handle trailing weapon variant data
@@ -125,7 +138,7 @@ impl BuildTemplate {
 	}
 
 	pub fn from_string(codestring: &str) -> BuildTemplate {
-		let code = ChatCode::new(&codestring);
+		let code = ChatCode::build(&codestring).unwrap();
         BuildTemplate::from_chatcode(&code)
 	}
 }
@@ -181,19 +194,21 @@ pub struct ChatCode<'a> {
 }
 
 impl<'a> ChatCode<'a> {
-	pub fn new(code: &'a str) -> ChatCode {
-		match code.strip_prefix("[&") {
-			Some(remainder) => match remainder.strip_suffix("]") {
-				Some(core) => ChatCode {
-					raw: core
-				},
-				None => ChatCode {
-					raw: code
-				}
-			},
-			None => ChatCode {
-				raw: code
-			}
+	/// Builds a decorateable ChatCode
+	///
+	/// Returns Ok(chatcode) if "[&codestring]" or "codestring", but Err otherwise
+	///
+	/// * Note: codestring is not validated for base64 correctness
+	pub fn build(code: &'a str) -> Result<ChatCode, &str> {
+
+		let head = code.strip_prefix("[&");
+		let tail = head.and_then(|c| c.strip_suffix("]"));
+
+		match (head, tail) {
+			(Some(_), Some(stripped)) => Ok(ChatCode { raw: stripped }),
+			(None, None) => Ok(ChatCode { raw: code }),
+			(None, Some(_)) => Err("Missing starting '[&' in chat code"),
+			(Some(_), None) => Err("Missing ending ']' in chat code"),
 		}
 	}
 
@@ -209,10 +224,16 @@ mod tests {
 
     use super::*;
 
+	#[test]
+	fn error_on_mismatched_chatcode_decoration() {
+		let code = ChatCode::build("[&123456");
+		assert!(code.is_err());
+	}
+
     #[test]
     fn trim_decorated_chatcode() {
         let data = String::from("[&123456]");
-		let code = ChatCode::new(data.as_str());
+		let code = ChatCode::build(&data).unwrap();
 		assert_eq!(code.raw, "123456");
 		assert_eq!(code.decorate(), "[&123456]");
     }
@@ -220,7 +241,7 @@ mod tests {
     #[test]
     fn non_chatcode_no_trim() {
         let data = String::from("123456");
-		let code = ChatCode::new(data.as_str());
+		let code = ChatCode::build(&data).unwrap();
 		assert_eq!(code.raw, "123456");
 		assert_eq!(code.decorate(), "[&123456]");
     }
@@ -237,10 +258,11 @@ mod tests {
             // 155, 246, 0, 0,
             // 232, 246, 0, 0
         let input = String::from("[&DQQZGggqHiYlD3kAvQAAALkAAAC8AAAAlwEAABYAAAAAAAAAAAAAAAAAAAACMwAjAARn9wAA3fYAAJv2AADo9gAA]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
 
-        let data = BASE64.decode(code.raw)
-            .expect("invaid base64");
+        let data = BASE64
+			.decode(code.raw)
+            .expect("invalid base64");
 
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
@@ -254,7 +276,7 @@ mod tests {
 	#[test]
 	fn build_template_direct_from_chatcode() {
         let input = "[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]";
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let build = BuildTemplate::from_chatcode(&code);
 
         assert_eq!(markup::armory(build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-ids='5503,5542,5570,5571,5666'></div><div data-armory-embed='specializations' data-armory-ids='41,37,56' data-armory-41-traits='232,214,226' data-armory-37-traits='266,257,1511' data-armory-56-traits='2115,2170,2138'></div>"));

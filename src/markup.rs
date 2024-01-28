@@ -205,7 +205,7 @@ mod tests {
     #[test]
     fn chatcode_to_armory_markup() {
         let input = String::from("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let data = BASE64.decode(code.raw)
             .expect("invaid base64");
 
@@ -217,7 +217,7 @@ mod tests {
     #[test]
     fn ranger_code_to_pet_string() {
         let input  = String::from("[&DQQePQgaSDd5AHgAARuWAbUAmgCsAbgADxvtAC87KhUAAAAAAAAAAAAAAAA=]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let data = BASE64.decode(code.raw)
             .expect("invaid base64");
 
@@ -229,7 +229,7 @@ mod tests {
     #[test]
     fn revenant_code_to_legend_string() {
         let input  = String::from("[&DQkOHQMmPzrcEdwRBhIGEisSKxLUEdQRyhHKEQUEAwLUESsSBhIGEisS1BE=]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let data = BASE64.decode(code.raw)
             .expect("invaid base64");
 
@@ -241,7 +241,7 @@ mod tests {
     #[test]
     fn ranger_code_to_invalid_pet_string() {
         let input  = String::from("[&DQQILxk+BRsJEwAAvQAAALkAAADmEgAAtBIAADxAAAAAAAAAAAAAAAAAAAA=]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let data = BASE64.decode(code.raw)
             .expect("invaid base64");
 
@@ -253,7 +253,7 @@ mod tests {
     #[test]
     fn revenant_code_to_invalid_legend_string() {
         let input  = String::from("[&DQkDOg8qRQDcEQAABhIAACsSAADUEQAAyhEAAAIAAAAAAAAAAAAAAAAAAAA=]");
-		let code = ChatCode::new(&input);
+		let code = ChatCode::build(&input).unwrap();
         let data = BASE64.decode(code.raw)
             .expect("invaid base64");
 
