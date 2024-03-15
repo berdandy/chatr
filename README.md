@@ -1,6 +1,6 @@
 # chatr
 
-Transform GW2 Template Codes into something else.
+A commandline tool to transform GW2 Template Codes into AW2 Markup.
 
 Example:
 
@@ -33,6 +33,12 @@ Output:
 ```
 
 Suitable for copy-pasting into a build webpage, or using with vim `read!`
+
+# Installation
+
+1. Download [the latest release](https://github.com/berdandy/chatr/releases)
+2. Unzip chatr.exe and place it somewhere convenient (in your path, probably)
+   - Note that chatr is not a signed executable so windows might complain. Read the source and compile it yourself if you're worried.
 
 # Dev Setup (on fresh machine)
 
