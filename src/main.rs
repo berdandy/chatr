@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     if debug_code {
         eprintln!("Decoded:\n{:?}\n", build);
-        eprintln!("Skills:\n{:?} \n", chatr::get_skill_ids(&build)?);
+        eprintln!("Skills:\n{:?} \n", build.get_skill_ids()?);
     }
 
     println!("{}", chatr::markup::armory(build)?);

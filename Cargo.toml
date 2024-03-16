@@ -1,12 +1,13 @@
 [package]
 name = "chatr"
-version = "0.5.3"
+version = "0.6.0"
 authors = ["Andy Berdan <andy@berdan.ca>"]
 edition = "2021"
 
 [dependencies]
 base64 = "0.21.5"
 deku = "0.16.0"
+lazy_static = "1.4.0"
 reqwest = { version = "0.11.22", features = ["blocking"] }
 serde = { version = "1.0.190", features = ["derive"] }
 serde_json = "1.0.107"

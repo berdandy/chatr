@@ -1,8 +1,6 @@
-use std::collections::HashMap;
 use std::error::Error;
 
 use crate::BuildTemplate;
-use crate::get_skill_ids;
 
 /// Get Ranger Pet markup
 ///
@@ -112,40 +110,9 @@ pub fn armory_misc(build: &BuildTemplate) -> Result<String, Box<dyn Error>> {
     }
 }
 
-pub fn get_trait_ids(specs: [u8; 3]) -> Result<HashMap<u8, [u16; 9]>, Box<dyn Error>> {
-    let mut trait_map = HashMap::new();
-
-    for spec_id in specs {
-        let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=latest");
-        let spec_data = reqwest::blocking::get(request_url)?.text()?;
-
-        // Parse the string of data into serde_json::Value.
-        let v: serde_json::Value = serde_json::from_str(&spec_data)?;
-        let trait_ids: [u16; 9] = [
-            v["major_traits"][0].as_u64().expect("integer") as u16,
-            v["major_traits"][1].as_u64().expect("integer") as u16,
-            v["major_traits"][2].as_u64().expect("integer") as u16,
-            v["major_traits"][3].as_u64().expect("integer") as u16,
-            v["major_traits"][4].as_u64().expect("integer") as u16,
-            v["major_traits"][5].as_u64().expect("integer") as u16,
-            v["major_traits"][6].as_u64().expect("integer") as u16,
-            v["major_traits"][7].as_u64().expect("integer") as u16,
-            v["major_traits"][8].as_u64().expect("integer") as u16
-        ];
-        trait_map.insert(spec_id, trait_ids);
-    }
-
-    Ok(trait_map)
-}
-
 pub fn armory(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 
-    let skills = get_skill_ids(&build)?;
-
-    let trait_ids_by_spec = get_trait_ids([build.specialization1, build.specialization2, build.specialization3])?;
-    let trait_ids1 = trait_ids_by_spec[&build.specialization1];
-    let trait_ids2 = trait_ids_by_spec[&build.specialization2];
-    let trait_ids3 = trait_ids_by_spec[&build.specialization3];
+    let skills = build.get_skill_ids()?;
 
     let misc = armory_misc(&build)?;
 
@@ -167,6 +134,8 @@ pub fn armory(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
         )
     };
 
+	let traits = build.get_traits();
+
     let markup = format!(concat!("{preamble}",
         "<div ",
           "data-armory-embed='specializations' ",
@@ -180,15 +149,15 @@ pub fn armory(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
         spec1=&build.specialization1,
         spec2=&build.specialization2,
         spec3=&build.specialization3,
-        trait11=trait_ids1[(build.trait_adept_1 - 1) as usize],
-        trait12=trait_ids1[(build.trait_master_1 + 3 - 1) as usize],
-        trait13=trait_ids1[(build.trait_grandmaster_1 + 6 - 1) as usize],
-        trait21=trait_ids2[(build.trait_adept_2 - 1) as usize],
-        trait22=trait_ids2[(build.trait_master_2 + 3 - 1) as usize],
-        trait23=trait_ids2[(build.trait_grandmaster_2 + 6 - 1) as usize],
-        trait31=trait_ids3[(build.trait_adept_3 - 1) as usize],
-        trait32=trait_ids3[(build.trait_master_3 + 3 - 1) as usize],
-        trait33=trait_ids3[(build.trait_grandmaster_3 + 6 - 1) as usize]
+        trait11=traits[0],
+        trait12=traits[1],
+        trait13=traits[2],
+        trait21=traits[3],
+        trait22=traits[4],
+        trait23=traits[5],
+        trait31=traits[6],
+        trait32=traits[7],
+        trait33=traits[8],
     );
 
     Ok(markup)

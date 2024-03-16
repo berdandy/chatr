@@ -11,3 +11,4 @@
 
 # editor things
 **/*.swp
+.vscode
