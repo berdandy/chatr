@@ -3,11 +3,16 @@
 //! # Examples
 //! ```
 //! use chatr::BuildTemplate;
+//! use chatr::ChatCode;
 //!
-//! let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
+//! let code = ChatCode::build("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]").unwrap();
+//! let build = BuildTemplate::from_chatcode(&code);
 //!
 //! assert_eq!(build.profession, 6);
 //! assert_eq!(build.healing.terrestrial, 116);
+//!
+//! let chatcode = build.to_decorated_chatcode();
+//! assert_eq!(chatcode, code.decorate());
 //! ```
 //!
 
@@ -17,7 +22,7 @@ use std::error::Error;
 use base64::engine::Engine as _;
 use base64::engine::general_purpose::STANDARD as BASE64;
 use deku::DekuContainerRead;
-use deku::bitvec::{BitSlice, Msb0};
+use deku::bitvec::{BitSlice, BitVec, Msb0};
 use deku::prelude::*;
 
 pub mod markup;
@@ -25,20 +30,20 @@ pub mod markup;
 // see docs/build_template_reference.cpp
 
 /// 16-bit skill palette pairs
-#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct PalettePair {
     pub terrestrial: u16,
     pub aquatic: u16,
 }
 
-#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct InactiveLegendUtilitiesTriple {
     pub utilities: [u16; 3]
 }
 
-#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian")]
 pub struct InactiveLegendUtilities {
     pub terrestrial: InactiveLegendUtilitiesTriple,
@@ -47,7 +52,7 @@ pub struct InactiveLegendUtilities {
 
 /// weapon mastery variant data. Currently only used in-game with non-untamed ranger builds wielding hammer
 // new with SotO
-#[derive(Debug, PartialEq, Default, DekuRead, DekuWrite)]
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "endian", ctx = "endian: deku::ctx::Endian", ctx_default = "deku::ctx::Endian::Little")]
 pub struct WeaponMastery {
     #[deku(update = "self.weapon_palette_ids.len()")]
@@ -75,10 +80,17 @@ impl WeaponMastery {
             }
         }
     }
+
+    fn optional_write(output: &mut BitVec<u8, Msb0>, weapons: &WeaponMastery) -> Result<(), DekuError> {
+		match (weapons.weapon_palette_count, weapons.weapon_variant_skill_count) {
+			(0,0) => Ok(()),
+			_ => weapons.write(output, ()),
+		}
+    }
 }
 
 /// data structure for build templates, as extracted from chat codes
-#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 pub struct BuildTemplate {
     magic: u8,              // must be 0xD
@@ -126,7 +138,10 @@ pub struct BuildTemplate {
     pub inactive_legend_utilities: InactiveLegendUtilities,
 
     // post-SotO, chat codes may have optional additional data on read
-    #[deku(reader = "WeaponMastery::optional_read(deku::rest)")]
+    #[deku(
+		reader = "WeaponMastery::optional_read(deku::rest)",
+		writer = "WeaponMastery::optional_write(deku::output, &self.weapons)"
+	)]
     pub weapons: WeaponMastery,
 }
 
@@ -140,6 +155,22 @@ impl BuildTemplate {
 	pub fn from_string(codestring: &str) -> BuildTemplate {
 		let code = ChatCode::build(&codestring).unwrap();
         BuildTemplate::from_chatcode(&code)
+	}
+
+	pub fn to_chatcode(&self) -> String {
+		let bytes = BuildTemplate::to_bytes(self).expect("Couldn't serialize build");
+		BASE64.encode(bytes)
+	}
+
+	pub fn to_decorated_chatcode(&self) -> String {
+		let bytes = BuildTemplate::to_bytes(self).expect("Couldn't serialize build");
+		format!("[&{}]", BASE64.encode(bytes))
+	}
+
+	pub fn default() -> Self {
+		Self {
+			magic: 0xD, ..Default::default()
+		}
 	}
 }
 

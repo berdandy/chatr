@@ -1,6 +1,6 @@
 [package]
 name = "chatr"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["Andy Berdan <andy@berdan.ca>"]
 edition = "2021"
 
