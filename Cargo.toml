@@ -8,6 +8,7 @@ repository = "https://github.com/berdandy/chatr"
 categories = ["command-line-utilities"]
 keywords = ["guild-wars-2", "gw2", "chatcode"]
 license = "MIT OR Apache-2.0"
+publish = false
 
 [dependencies]
 base64 = "0.21.5"
