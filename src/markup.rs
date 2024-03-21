@@ -11,29 +11,28 @@ use crate::BuildTemplate;
 /// 
 /// TODO: use a single request with multiple ids
 pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
-    let mut pet_names = String::from("Pets: ");
+	let pets = [pet1, pet2];
 
-    let request_url = format!("https://api.guildwars2.com/v2/pets/{pet1}?v=latest");
-    let pet_data  = reqwest::blocking::get(request_url)?.text()?;
+	let mut markup = String::new();
 
-    let v: serde_json::Value = serde_json::from_str(&pet_data)?;
-    if v.as_object().expect("Invalid JSON Object").contains_key("name") {
-        pet_names += &String::from(v["name"].as_str().expect("invalid pet1 name"));
-    }
+	for i in 0..=1 {
+		let request_url = format!("https://api.guildwars2.com/v2/pets/{pet_id}?v=latest", pet_id=pets[i]);
+		let pet_data  = reqwest::blocking::get(request_url)?.text()?;
 
-    let request_url = format!("https://api.guildwars2.com/v2/pets/{pet2}?v=latest");
-    let pet2_data  = reqwest::blocking::get(request_url)?.text()?;
+		let v: serde_json::Value = serde_json::from_str(&pet_data)?;
+		let obj = v.as_object().expect("Invalid JSON Object");
 
-    let v2: serde_json::Value = serde_json::from_str(&pet2_data)?;
-    if v2.as_object().expect("Invalid JSON Object").contains_key("name") {
-        // ie, both pets
-        if v.as_object().expect("Invalid JSON Object").contains_key("name") {
-            pet_names += " / ";
-        }
-        pet_names += &String::from(v2["name"].as_str().expect("invalid pet2 name"));
-    }
+		let pet_markup:String = match (obj["name"].as_str(), obj["icon"].as_str()) {
+			(Some(name), Some(icon)) => format!("<div style=\"background: url('{icon}') 50% 50% no-repeat; width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\">{name}</div>"),
+			(_, Some(icon)) => format!("<div style=\"background: url('{icon}') 50% 50% no-repeat; width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\"></div>"),
+			(Some(name), _) => format!("<div style=\"'width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\">{name}</div>"),
+			(_,_) => String::new(),
+		};
 
-    Ok(pet_names)
+		markup += &pet_markup;
+	}
+
+    Ok(markup)
 }
 
 /// Get Revenant Legend markup
