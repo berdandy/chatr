@@ -8,24 +8,22 @@ use crate::BuildTemplate;
 ///
 /// - Ranger pets aren't supported by armory-embeds. We'll have to roll our own. /v2/pets API gives
 ///   a link to a png file for `icon`. We can render that in addition to the caption for the pet `name`
-/// 
-/// TODO: use a single request with multiple ids
+/// - Markup for Pets is output with css classes as follows:
+///   peticon: div with added background, containing name as text
+///
 pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
-	let pets = [pet1, pet2];
+
+	let request_url = format!("https://api.guildwars2.com/v2/pets?v=latest&ids={pet1},{pet2}");
+	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
+	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
+	let pets = v.as_array().expect("Invalid JSON Array");
 
 	let mut markup = String::new();
-
-	for i in 0..=1 {
-		let request_url = format!("https://api.guildwars2.com/v2/pets/{pet_id}?v=latest", pet_id=pets[i]);
-		let pet_data  = reqwest::blocking::get(request_url)?.text()?;
-
-		let v: serde_json::Value = serde_json::from_str(&pet_data)?;
-		let obj = v.as_object().expect("Invalid JSON Object");
-
-		let pet_markup:String = match (obj["name"].as_str(), obj["icon"].as_str()) {
-			(Some(name), Some(icon)) => format!("<div style=\"background: url('{icon}') 50% 50% no-repeat; width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\">{name}</div>"),
-			(_, Some(icon)) => format!("<div style=\"background: url('{icon}') 50% 50% no-repeat; width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\"></div>"),
-			(Some(name), _) => format!("<div style=\"'width: 128px; height: 128px; vertical-align: bottom; display: table-cell; font-weight: bold;\">{name}</div>"),
+	for pet in pets {
+		let pet_markup:String = match (pet["name"].as_str(), pet["icon"].as_str()) {
+			(Some(name), Some(icon)) => format!("<div class=\"peticon\" style=\"background: url('{icon}') 50% 50% no-repeat;\">{name}</div>"),
+			(_, Some(icon)) => format!("<div class=\"peticon\" style=\"background: url('{icon}') 50% 50% no-repeat;\"></div>"),
+			(Some(name), _) => format!("<div class=\"peticon\">{name}</div>"),
 			(_,_) => String::new(),
 		};
 
@@ -42,6 +40,7 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 /// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
 ///   `heal`, `elite` and an array for `utilities`.
 /// Note: Legend7 (Alliance) is missing. Probably because the skills are 'doubled'
+/// 
 /// TODO: use a single request with all legend ids
 pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
     // get list of legends
