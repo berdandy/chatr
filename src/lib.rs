@@ -211,7 +211,7 @@ impl BuildTemplate {
 		let mut trait_map = HashMap::new();
 
 		for spec_id in specs {
-			let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=latest");
+			let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=2024-03-25T00:00:00Z");
 			let spec_data = reqwest::blocking::get(request_url)?.text()?;
 
 			// Parse the string of data into serde_json::Value.
@@ -293,7 +293,7 @@ const PROFESSIONS: &'static [&str] = &[
   ];
 
 fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
-	let request_url = format!("https://api.guildwars2.com/v2/professions/{profession_id}?v=latest");
+	let request_url = format!("https://api.guildwars2.com/v2/professions/{profession_id}?v=2024-03-25T00:00:00Z");
 	let palette_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
 
 	// Parse the string of data into serde_json::Value.

@@ -13,7 +13,7 @@ use crate::BuildTemplate;
 ///
 pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 
-	let request_url = format!("https://api.guildwars2.com/v2/pets?v=latest&ids={pet1},{pet2}");
+	let request_url = format!("https://api.guildwars2.com/v2/pets?v=2024-03-25T00:00:00Z&ids={pet1},{pet2}");
 	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
 	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
 	let pets = v.as_array().expect("Invalid JSON Array");
@@ -44,7 +44,7 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 /// TODO: use a single request with all legend ids
 pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
     // get list of legends
-    let request_url = format!("https://api.guildwars2.com/v2/legends?v=latest");//, legend1);
+    let request_url = format!("https://api.guildwars2.com/v2/legends?v=2024-03-25T00:00:00Z");//, legend1);
     let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
     let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
     let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
@@ -54,7 +54,7 @@ pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>>
     let mut first = true;
     let mut output = String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='");
     for legend in legend_names {
-        let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=latest", legend.as_str().ok_or("invalid legend")?);
+        let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=2024-03-25T00:00:00Z", legend.as_str().ok_or("invalid legend")?);
         let legend_data  = reqwest::blocking::get(request_url)?.text()?;
         let v: serde_json::Value = serde_json::from_str(&legend_data)?;
 
