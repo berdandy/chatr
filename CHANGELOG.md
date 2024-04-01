@@ -1,3 +1,7 @@
+# Version 0.6.4 (2024-04-01)
+
+- Converted specializations, professions and pets to use hardcoded json data instead of hitting api (legends still pending)
+
 # Version 0.6.3 (2024-03-21)
 
 - Added aw2/armory markup for pet icons via the api (needs css cleanup)

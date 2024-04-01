@@ -13,10 +13,18 @@ use crate::BuildTemplate;
 ///
 pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 
-	let request_url = format!("https://api.guildwars2.com/v2/pets?v=2024-03-25T00:00:00Z&ids={pet1},{pet2}");
-	let pet_data  = reqwest::blocking::get(request_url)?.text()?;
-	let v: serde_json::Value = serde_json::from_str(&pet_data)?;
-	let pets = v.as_array().expect("Invalid JSON Array");
+    let all_pets_str = include_str!("pets.json");
+    let all_pets: Vec<serde_json::Value> = serde_json::from_str(&all_pets_str)?;
+
+    let pets: Vec<&serde_json::Value> = all_pets
+        .iter()
+        .filter(|&p| p["id"] == pet1 || p["id"] == pet2)
+        .collect();
+
+	// let request_url = format!("https://api.guildwars2.com/v2/pets?v=2024-03-25T00:00:00Z&ids={pet1},{pet2}");
+	// let pet_data  = reqwest::blocking::get(request_url)?.text()?;
+	// let v: serde_json::Value = serde_json::from_str(&pet_data)?;
+	// let pets = v.as_array().expect("Invalid JSON Array");
 
 	let mut markup = String::new();
 	for pet in pets {
@@ -190,7 +198,7 @@ mod tests {
 
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-        assert_eq!(armory_misc(&build).unwrap(), String::from("Pets: Juvenile Tiger / Juvenile Rock Gazelle"));
+        assert_eq!(armory_misc(&build).unwrap(), String::from("<div class=\"peticon\" style=\"background: url('https://render.guildwars2.com/file/A41953A8682309700FA17601FE05DB040C6CD07B/1128514.png') 50% 50% no-repeat;\">Juvenile Tiger</div><div class=\"peticon\" style=\"background: url('https://render.guildwars2.com/file/F3EED35B2DD6B52FFCBFD7FCCA184EB7EBCF01A4/1769875.png') 50% 50% no-repeat;\">Juvenile Rock Gazelle</div>"));
     }
 
     #[test]
@@ -214,7 +222,7 @@ mod tests {
 
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
 
-        assert_eq!(armory_misc(&build).unwrap(), String::from("Pets: Juvenile Wallow"));
+        assert_eq!(armory_misc(&build).unwrap(), String::from("<div class=\"peticon\" style=\"background: url('https://render.guildwars2.com/file/58AFDFDFDDB8325F5E076C2400C63D450C15EA09/2604592.png') 50% 50% no-repeat;\">Juvenile Wallow</div>"));
     }
 
     #[test]

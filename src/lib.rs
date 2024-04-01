@@ -210,22 +210,28 @@ impl BuildTemplate {
 
 		let mut trait_map = HashMap::new();
 
+		let all_specs_str = include_str!("specializations.json");
+		let all_specs: Vec<serde_json::Value> = serde_json::from_str(&all_specs_str)?;
+
 		for spec_id in specs {
-			let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=2024-03-25T00:00:00Z");
-			let spec_data = reqwest::blocking::get(request_url)?.text()?;
+			// let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=2024-03-25T00:00:00Z");
+			// let spec_data = reqwest::blocking::get(request_url)?.text()?;
+
+			let spec = all_specs
+				.iter()
+				.find(|&s| s["id"] == spec_id).unwrap();
 
 			// Parse the string of data into serde_json::Value.
-			let v: serde_json::Value = serde_json::from_str(&spec_data)?;
 			let trait_ids: [u16; 9] = [
-				v["major_traits"][0].as_u64().expect("integer") as u16,
-				v["major_traits"][1].as_u64().expect("integer") as u16,
-				v["major_traits"][2].as_u64().expect("integer") as u16,
-				v["major_traits"][3].as_u64().expect("integer") as u16,
-				v["major_traits"][4].as_u64().expect("integer") as u16,
-				v["major_traits"][5].as_u64().expect("integer") as u16,
-				v["major_traits"][6].as_u64().expect("integer") as u16,
-				v["major_traits"][7].as_u64().expect("integer") as u16,
-				v["major_traits"][8].as_u64().expect("integer") as u16
+				spec["major_traits"][0].as_u64().expect("integer") as u16,
+				spec["major_traits"][1].as_u64().expect("integer") as u16,
+				spec["major_traits"][2].as_u64().expect("integer") as u16,
+				spec["major_traits"][3].as_u64().expect("integer") as u16,
+				spec["major_traits"][4].as_u64().expect("integer") as u16,
+				spec["major_traits"][5].as_u64().expect("integer") as u16,
+				spec["major_traits"][6].as_u64().expect("integer") as u16,
+				spec["major_traits"][7].as_u64().expect("integer") as u16,
+				spec["major_traits"][8].as_u64().expect("integer") as u16
 			];
 			trait_map.insert(spec_id, trait_ids);
 		}
@@ -293,12 +299,20 @@ const PROFESSIONS: &'static [&str] = &[
   ];
 
 fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
-	let request_url = format!("https://api.guildwars2.com/v2/professions/{profession_id}?v=2024-03-25T00:00:00Z");
-	let palette_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
+
+	let professions_str = include_str!("professions.json");
+	let professions: Vec<serde_json::Value> = serde_json::from_str(&professions_str).unwrap();
+
+	let prof = professions
+		.iter()
+		.find(|&s| s["id"] == profession_id).unwrap();
+
+	// let request_url = format!("https://api.guildwars2.com/v2/professions/{profession_id}?v=2024-03-25T00:00:00Z");
+	// let palette_data = reqwest::blocking::get(request_url).unwrap().text().unwrap();
 
 	// Parse the string of data into serde_json::Value.
-	let v: serde_json::Value = serde_json::from_str(&palette_data).unwrap();
-	let a = v["skills_by_palette"].as_array().expect("skills_by_palette issue");
+	// let v: serde_json::Value = serde_json::from_str(&palette_data).unwrap();
+	let a = prof["skills_by_palette"].as_array().expect("skills_by_palette issue");
 	let mut skill_palette_map = HashMap::new();
 	for mapping in a {
 		let skills_by_palette = mapping.as_array().expect("invalid mapping in skills_by_palette");
