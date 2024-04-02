@@ -51,24 +51,32 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 /// 
 /// TODO: use a single request with all legend ids
 pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
-    // get list of legends
-    let request_url = format!("https://api.guildwars2.com/v2/legends?v=2024-03-25T00:00:00Z");//, legend1);
-    let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
-    let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
-    let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
+
+    let all_legends_str = include_str!("legends.json");
+    let all_legends: Vec<serde_json::Value> = serde_json::from_str(&all_legends_str)?;
+
+    let legends: Vec<&serde_json::Value> = all_legends
+        .iter()
+        .filter(|&p| p["code"] == legend1 || p["code"] == legend2)
+        .collect();
+
+    // let request_url = format!("https://api.guildwars2.com/v2/legends?v=2024-03-25T00:00:00Z");//, legend1);
+    // let legend_name_data  = reqwest::blocking::get(request_url)?.text()?;
+    // let legend_name_v: serde_json::Value = serde_json::from_str(&legend_name_data)?;
+    // let legend_names = legend_name_v.as_array().ok_or("invalid array of legend names")?;
 
     let mut skill_output = String::new();
 
     let mut first = true;
     let mut output = String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='");
-    for legend in legend_names {
-        let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=2024-03-25T00:00:00Z", legend.as_str().ok_or("invalid legend")?);
-        let legend_data  = reqwest::blocking::get(request_url)?.text()?;
-        let v: serde_json::Value = serde_json::from_str(&legend_data)?;
+    for legend in legends {
+        // let request_url = format!("https://api.guildwars2.com/v2/legends/{}?v=2024-03-25T00:00:00Z", legend.as_str().ok_or("invalid legend")?);
+        // let legend_data  = reqwest::blocking::get(request_url)?.text()?;
+        // let v: serde_json::Value = serde_json::from_str(&legend_data)?;
 
-        let code = v["code"].as_u64().expect("integer") as u8;
+        let code = legend["code"].as_u64().expect("integer") as u8;
         if code == legend1 || code == legend2 {
-            let swap = v["swap"].as_u64().expect("integer"); 
+            let swap = legend["swap"].as_u64().expect("integer"); 
             if first {
                 output += &String::from(format!("{swap}"));
                 first = false;
@@ -77,26 +85,17 @@ pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>>
             }
 
             skill_output += "<div data-armory-embed='skills' data-armory-ids='";
-                skill_output += &format!("{},", v["heal"].as_u64().expect("integer"));
-                let utils = v["utilities"].as_array().ok_or("invalid utilities")?;
+                skill_output += &format!("{},", legend["heal"].as_u64().expect("integer"));
+                let utils = legend["utilities"].as_array().ok_or("invalid utilities")?;
                 for util in utils {
                     skill_output += &format!("{},", util.as_u64().expect("integer"));
                 }
-                skill_output += &format!("{}", v["elite"].as_u64().expect("integer"));
+                skill_output += &format!("{}", legend["elite"].as_u64().expect("integer"));
             
             skill_output += "'></div>";
         }
 
     }
-
-	if 7 == legend1 || 7 == legend2 {
-		// garbage special case because Anet didn't put Alliance legend in the API
-		output += match first {
-			true => "62891",
-			false => ",62891"
-		};
-		skill_output += "<div data-armory-embed='skills' data-armory-ids='62719,62832,62962,62878,62942'></div>";
-	}
 
     output += &String::from("'></div>");
 

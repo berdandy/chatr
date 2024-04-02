@@ -1,3 +1,7 @@
+# Version 0.6.6 (2024-04-02)
+
+- Added legends to offline data source
+
 # Version 0.6.5 (2024-04-01)
 
 - Converted specializations, professions and pets to use hardcoded json data instead of hitting api (legends still pending)
