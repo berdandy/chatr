@@ -1,6 +1,7 @@
-# Version 0.6.6 (2024-04-02)
+# Version 0.6.7 (2024-04-02)
 
 - Added legends to offline data source
+- Improved some error handling
 
 # Version 0.6.5 (2024-04-01)
 

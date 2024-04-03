@@ -148,13 +148,13 @@ pub struct BuildTemplate {
 
 impl BuildTemplate {
 	pub fn from_chatcode(code: &ChatCode) -> BuildTemplate {
-        let data = BASE64.decode(code.raw).expect("invaid base64");
-        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).unwrap();
+        let data = BASE64.decode(code.raw).expect("invalid base64");
+        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
 		build
 	}
 
 	pub fn from_string(codestring: &str) -> BuildTemplate {
-		let code = ChatCode::build(&codestring).unwrap();
+		let code = ChatCode::build(&codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
         BuildTemplate::from_chatcode(&code)
 	}
 
