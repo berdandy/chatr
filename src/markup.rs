@@ -14,7 +14,7 @@ use crate::BuildTemplate;
 pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 
     let all_pets_str = include_str!("pets.json");
-    let all_pets: Vec<serde_json::Value> = serde_json::from_str(&all_pets_str)?;
+    let all_pets: Vec<serde_json::Value> = serde_json::from_str(all_pets_str)?;
 
     let pets: Vec<&serde_json::Value> = all_pets
         .iter()
@@ -53,7 +53,7 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>> {
 
     let all_legends_str = include_str!("legends.json");
-    let all_legends: Vec<serde_json::Value> = serde_json::from_str(&all_legends_str)?;
+    let all_legends: Vec<serde_json::Value> = serde_json::from_str(all_legends_str)?;
 
     let legends: Vec<&serde_json::Value> = all_legends
         .iter()
@@ -78,10 +78,10 @@ pub fn armory_legend(legend1: u8, legend2: u8) -> Result<String, Box<dyn Error>>
         if code == legend1 || code == legend2 {
             let swap = legend["swap"].as_u64().expect("integer"); 
             if first {
-                output += &String::from(format!("{swap}"));
+                output += &format!("{swap}");
                 first = false;
             } else {
-                output += &String::from(format!(",{swap}"));
+                output += &format!(",{swap}");
             }
 
             skill_output += "<div data-armory-embed='skills' data-armory-ids='";
@@ -123,7 +123,7 @@ pub fn armory(build: BuildTemplate) -> Result<String, Box<dyn Error>> {
 
     // revenant has legend skill overriding skills, so we only  use legend markup in misc
     let preamble = match build.profession {
-        9 => format!("{misc}", misc=misc),
+        9 => misc.to_string(),
         _ => format!(concat!("{misc}",
                 "<div ",
                   "data-armory-embed='skills' ",

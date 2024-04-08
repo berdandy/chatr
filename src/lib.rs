@@ -154,7 +154,7 @@ impl BuildTemplate {
 	}
 
 	pub fn from_string(codestring: &str) -> BuildTemplate {
-		let code = ChatCode::build(&codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
+		let code = ChatCode::build(codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
         BuildTemplate::from_chatcode(&code)
 	}
 
@@ -168,7 +168,7 @@ impl BuildTemplate {
 		format!("[&{}]", BASE64.encode(bytes))
 	}
 
-	pub fn default() -> Self {
+	pub fn build() -> Self {
 		Self {
 			magic: 0xD, ..Default::default()
 		}
@@ -211,7 +211,7 @@ impl BuildTemplate {
 		let mut trait_map = HashMap::new();
 
 		let all_specs_str = include_str!("specializations.json");
-		let all_specs: Vec<serde_json::Value> = serde_json::from_str(&all_specs_str)?;
+		let all_specs: Vec<serde_json::Value> = serde_json::from_str(all_specs_str)?;
 
 		for spec_id in specs {
 			// let request_url = format!("https://api.guildwars2.com/v2/specializations/{spec_id}?v=2024-03-25T00:00:00Z");
@@ -286,7 +286,7 @@ impl BuildTemplate {
 	}
 }
 
-const PROFESSIONS: &'static [&str] = &[
+const PROFESSIONS: &[&str] = &[
     "Guardian",
     "Warrior",
     "Engineer",
@@ -301,7 +301,7 @@ const PROFESSIONS: &'static [&str] = &[
 fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
 
 	let professions_str = include_str!("professions.json");
-	let professions: Vec<serde_json::Value> = serde_json::from_str(&professions_str).unwrap();
+	let professions: Vec<serde_json::Value> = serde_json::from_str(professions_str).unwrap();
 
 	let prof = professions
 		.iter()
@@ -328,24 +328,22 @@ fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
 lazy_static! {
 	static ref PALETTE_SKILLS_BY_PROFESSION: [Option<HashMap<u16, u16>> ; 9] = {
 		let mut p2s: [Option<HashMap<u16, u16>> ; 9] = Default::default();
-		let mut i = 0;
-		for profession_id in PROFESSIONS {
+		for (i, profession_id) in PROFESSIONS.iter().enumerate() {
 			p2s[i] = Some(palette_builder(profession_id));
-			i = i + 1;
 		}
+
 		p2s
 	};
 
 	// inverted
 	static ref SKILLS_PALETTE_BY_PROFESSION: [Option<HashMap<u16, u16>> ; 9] = {
 		let mut s2p: [Option<HashMap<u16, u16>> ; 9] = Default::default();
-		let mut i = 0;
-		for palette_map in PALETTE_SKILLS_BY_PROFESSION.iter() {
-			s2p[i] = match palette_map {
-				Some(palette_to_skill) => Some(palette_to_skill.iter().map(|(k, v)| (v.clone(), k.clone())).collect()),
-				_ => None
-			};
-			i = i + 1;
+		for (i, palette_map) in PALETTE_SKILLS_BY_PROFESSION.iter().enumerate() {
+			s2p[i] = palette_map
+				.as_ref()
+				.map(|palette_to_skill| palette_to_skill
+					.iter()
+					.map(|(k, v)| (*v, *k)).collect());
 		}
 		s2p
 	};
@@ -364,7 +362,7 @@ impl<'a> ChatCode<'a> {
 	pub fn build(code: &'a str) -> Result<ChatCode, &str> {
 
 		let head = code.strip_prefix("[&");
-		let tail = head.and_then(|c| c.strip_suffix("]"));
+		let tail = head.and_then(|c| c.strip_suffix(']'));
 
 		match (head, tail) {
 			(Some(_), Some(stripped)) => Ok(ChatCode { raw: stripped }),
@@ -443,7 +441,7 @@ mod tests {
 
 		let skill_ids = build.get_skill_ids().unwrap();
 		
-		let mut build2 = BuildTemplate::default();
+		let mut build2 = BuildTemplate::build();
 		build2.profession = build.profession;
 		build2.set_palette_ids_from_skill_ids(skill_ids);
 		let skill_ids2 = build2.get_skill_ids().unwrap();
@@ -460,7 +458,7 @@ mod tests {
 		let specs = build.get_specializations();
 		let traits = build.get_traits();
 
-		let mut build2 = BuildTemplate::default();
+		let mut build2 = BuildTemplate::build();
 		build2.profession = build.profession;
 		build2.set_spec_and_trait_indexes_from_ids(specs, traits);
 		let traits2 = build2.get_traits();
