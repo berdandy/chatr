@@ -18,5 +18,5 @@ fn main() {
 	api_dump("l", "src/legends.json").unwrap();
 	api_dump("S", "src/specializations.json").unwrap();
 	api_dump("P", "src/pets.json").unwrap();
-    // println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=build.rs");
 }
