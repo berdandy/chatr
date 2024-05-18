@@ -1,3 +1,8 @@
+# Version 0.6.8 (2024-05-17)
+
+- Added build.rs script to auto-download data files from api
+- Added elite true/false flag to specialization offline data (unused)
+
 # Version 0.6.7 (2024-04-02)
 
 - Added legends to offline data source
