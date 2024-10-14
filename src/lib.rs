@@ -98,6 +98,25 @@ pub struct Skill {
     pub id: u32
 }
 
+impl Skill {
+	pub fn try_from_chatcode(code: &ChatCode) -> Result<Skill, Box<dyn Error>> {
+        let data = BASE64.decode(code.raw)?;
+        let (_rest, skill) = Skill::from_bytes((data.as_ref(), 0))?;
+        Ok(skill)
+    }
+
+	pub fn from_chatcode(code: &ChatCode) -> Skill {
+        let data = BASE64.decode(code.raw).expect("invalid base64");
+        let (_rest, skill) = Skill::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
+		skill
+    }
+
+	pub fn from_string(codestring: &str) -> Skill {
+		let code = ChatCode::build(codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
+        Skill::from_chatcode(&code)
+	}
+}
+
 /// data structure for build templates, as extracted from chat codes
 #[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little", magic = b"\x0d")]
@@ -154,6 +173,12 @@ pub struct BuildTemplate {
 }
 
 impl BuildTemplate {
+	pub fn try_from_chatcode(code: &ChatCode) -> Result<BuildTemplate, Box<dyn Error>> {
+        let data = BASE64.decode(code.raw)?;
+        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0))?;
+        Ok(build)
+    }
+
 	pub fn from_chatcode(code: &ChatCode) -> BuildTemplate {
         let data = BASE64.decode(code.raw).expect("invalid base64");
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
@@ -366,7 +391,7 @@ impl<'a> ChatCode<'a> {
 	/// Returns Ok(chatcode) if "[&codestring]" or "codestring", but Err otherwise
 	///
 	/// * Note: codestring is not validated for base64 correctness
-	pub fn build(code: &'a str) -> Result<ChatCode, &str> {
+	pub fn build(code: &str) -> Result<ChatCode, &str> {
 
 		let head = code.strip_prefix("[&");
 		let tail = head.and_then(|c| c.strip_suffix(']'));
@@ -443,7 +468,7 @@ mod tests {
 	#[test]
 	fn bidirectional_skill_palette() {
         let input = "[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]";
-		let code = ChatCode::build(&input).unwrap();
+		let code = ChatCode::build(input).unwrap();
         let build = BuildTemplate::from_chatcode(&code);
 
 		let skill_ids = build.get_skill_ids().unwrap();
@@ -459,7 +484,7 @@ mod tests {
 	#[test]
 	fn bidirectional_traits() {
         let input = "[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]";
-		let code = ChatCode::build(&input).unwrap();
+		let code = ChatCode::build(input).unwrap();
         let build = BuildTemplate::from_chatcode(&code);
 
 		let specs = build.get_specializations();
@@ -476,7 +501,7 @@ mod tests {
 	#[test]
 	fn build_template_direct_from_chatcode() {
         let input = "[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]";
-		let code = ChatCode::build(&input).unwrap();
+		let code = ChatCode::build(input).unwrap();
         let build = BuildTemplate::from_chatcode(&code);
 
         assert_eq!(markup::armory(build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-ids='5503,5542,5570,5571,5666'></div><div data-armory-embed='specializations' data-armory-ids='41,37,56' data-armory-41-traits='232,214,226' data-armory-37-traits='266,257,1511' data-armory-56-traits='2115,2170,2138'></div>"));
@@ -487,4 +512,27 @@ mod tests {
         let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
         assert_eq!(markup::armory(build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-ids='5503,5542,5570,5571,5666'></div><div data-armory-embed='specializations' data-armory-ids='41,37,56' data-armory-41-traits='232,214,226' data-armory-37-traits='266,257,1511' data-armory-56-traits='2115,2170,2138'></div>"));
 	}
+
+    #[test]
+    fn skill_template_from_string() {
+        let skill = Skill::from_string("[&BucCAAA=]");
+        assert_eq!(skill.id, 743);
+    }
+
+    #[test]
+    fn try_skill_by_magic() {
+		let code = ChatCode::build("[&BucCAAA=]").unwrap(); // aegis skill
+        let skill = Skill::try_from_chatcode(&code).unwrap();
+        let expected = Skill {
+            id: 743
+        };
+        assert_eq!(skill, expected);
+
+    }
+    #[test]
+    #[should_panic]
+    fn try_build_template_by_magic_and_fail() {
+		let code = ChatCode::build("[&BucCAAA=]").unwrap(); // same as above test (ie, not a build template)
+        BuildTemplate::try_from_chatcode(&code).unwrap();
+    }
 }

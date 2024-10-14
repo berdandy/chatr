@@ -47,6 +47,7 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 ///
 /// - Revenant skills DO NOT use the skill palette. /v2/legends API gives a structure with `swap`,
 ///   `heal`, `elite` and an array for `utilities`.
+///
 /// Note: Legend7 (Alliance) is missing. Probably because the skills are 'doubled'
 /// 
 /// TODO: use a single request with all legend ids
