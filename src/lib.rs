@@ -90,11 +90,18 @@ impl WeaponMastery {
     }
 }
 
+/// data structure for skills, as extracted from chat codes
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "little", magic = b"\x06")]
+pub struct Skill {
+    #[deku(bits = "24")]
+    pub id: u32
+}
+
 /// data structure for build templates, as extracted from chat codes
 #[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
-#[deku(endian = "little")]
+#[deku(endian = "little", magic = b"\x0d")]
 pub struct BuildTemplate {
-    magic: u8,              // must be 0xD
     pub profession: u8,         // 0-based, IDs on API are 1-based
 
     pub specialization1: u8,
@@ -170,7 +177,7 @@ impl BuildTemplate {
 
 	pub fn build() -> Self {
 		Self {
-			magic: 0xD, ..Default::default()
+			..Default::default()
 		}
 	}
 
