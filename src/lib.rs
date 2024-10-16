@@ -90,6 +90,14 @@ impl WeaponMastery {
     }
 }
 
+pub trait Code {
+	fn from_chatcode(code: &ChatCode) -> Self;
+	fn from_string(codestring: &str) -> Self where Self: Sized {
+		let code = ChatCode::build(codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
+        Self::from_chatcode(&code)
+    }
+}
+
 /// data structure for skills, as extracted from chat codes
 #[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little", magic = b"\x06")]
@@ -98,23 +106,20 @@ pub struct Skill {
     pub id: u32
 }
 
+impl Code for Skill {
+	fn from_chatcode(code: &ChatCode) -> Skill {
+        let data = BASE64.decode(code.raw).expect("invalid base64");
+        let (_rest, skill) = Skill::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
+		skill
+    }
+}
+
 impl Skill {
 	pub fn try_from_chatcode(code: &ChatCode) -> Result<Skill, Box<dyn Error>> {
         let data = BASE64.decode(code.raw)?;
         let (_rest, skill) = Skill::from_bytes((data.as_ref(), 0))?;
         Ok(skill)
     }
-
-	pub fn from_chatcode(code: &ChatCode) -> Skill {
-        let data = BASE64.decode(code.raw).expect("invalid base64");
-        let (_rest, skill) = Skill::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
-		skill
-    }
-
-	pub fn from_string(codestring: &str) -> Skill {
-		let code = ChatCode::build(codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
-        Skill::from_chatcode(&code)
-	}
 }
 
 /// data structure for build templates, as extracted from chat codes
@@ -172,23 +177,20 @@ pub struct BuildTemplate {
     pub weapons: WeaponMastery,
 }
 
+impl Code for BuildTemplate {
+	fn from_chatcode(code: &ChatCode) -> BuildTemplate {
+        let data = BASE64.decode(code.raw).expect("invalid base64");
+        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
+		build
+	}
+}
+
 impl BuildTemplate {
 	pub fn try_from_chatcode(code: &ChatCode) -> Result<BuildTemplate, Box<dyn Error>> {
         let data = BASE64.decode(code.raw)?;
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0))?;
         Ok(build)
     }
-
-	pub fn from_chatcode(code: &ChatCode) -> BuildTemplate {
-        let data = BASE64.decode(code.raw).expect("invalid base64");
-        let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0)).expect(&format!("invalid template from {}", code.raw)[..]);
-		build
-	}
-
-	pub fn from_string(codestring: &str) -> BuildTemplate {
-		let code = ChatCode::build(codestring).expect(&format!("can't build chatcode from {}", codestring)[..]);
-        BuildTemplate::from_chatcode(&code)
-	}
 
 	pub fn to_chatcode(&self) -> String {
 		let bytes = BuildTemplate::to_bytes(self).expect("Couldn't serialize build");
