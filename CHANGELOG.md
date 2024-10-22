@@ -1,3 +1,7 @@
+# Version 0.6.11 (2024-10-22)
+
+- Added -D flag for dependency generation. JSON output format
+
 # Version 0.6.10 (2024-10-15)
 
 - Added support for skill chat codes

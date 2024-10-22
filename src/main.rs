@@ -5,11 +5,12 @@ use std::process;
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
     if args.len() <= 1 || args.len() > 3 {  // optional -d
-        println!("Usage: {} [-d] <chat-code>", args[0]);
+        println!("Usage: {} [-d | -D] <chat-code>", args[0]);
         process::exit(1);
     }
 
     let debug_code = args[1] == "-d";
+    let depgen = args[1] == "-D";
 
     let input = &args[args.len()-1];
     if let Ok(code) = chatr::ChatCode::build(input) {
@@ -28,7 +29,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                 eprintln!("Skills:\n{:?} \n", build.get_skill_ids()?);
             }
 
-            println!("{}", chatr::markup::armory(build)?);
+            if depgen {
+                println!("{{ 'specializations': {:?}, 'traits': {:?}, 'skills': {:?} }}",
+                    build.get_specializations(),
+                    build.get_traits(),
+                    build.get_skill_ids()?
+                );
+            } else {
+                println!("{}", chatr::markup::armory(build)?);
+            }
         }
     }
 
