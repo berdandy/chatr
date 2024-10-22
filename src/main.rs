@@ -30,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
 
             if depgen {
-                println!("{{ 'specializations': {:?}, 'traits': {:?}, 'skills': {:?} }}",
+                println!("{{ \"specializations\": {:?}, \"traits\": {:?}, \"skills\": {:?} }}",
                     build.get_specializations(),
                     build.get_traits(),
                     build.get_skill_ids()?
