@@ -6,7 +6,7 @@
 //! use chatr::ChatCode;
 //!
 //! let code = ChatCode::build("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]").unwrap();
-//! let build = BuildTemplate::from_chatcode(&code);
+//! let build = BuildTemplate::try_from_chatcode(&code).unwrap();
 //!
 //! assert_eq!(build.profession, 6);
 //! assert_eq!(build.healing.terrestrial, 116);
