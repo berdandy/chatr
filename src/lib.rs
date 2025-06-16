@@ -123,6 +123,20 @@ impl Skill {
 }
 
 #[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
+#[deku(endian = "little", magic = b"\x01")]
+pub struct GearTemplate {
+    pub armor: [u16; 6],        // stat
+    pub rune: u32,              // item
+
+    pub weapon_types: [u32; 4], // item
+    pub weapons: [u16; 4],      // stat
+    pub sigils: [u32; 4],       // item
+
+    pub trinkets: [u16; 6],     // stat
+    pub relic: u32              // item
+}
+
+#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little", magic = b"\x0d")]
 pub struct BuildTemplate {
     pub profession: u8,         // 0-based, IDs on API are 1-based
@@ -319,7 +333,7 @@ impl BuildTemplate {
 	}
 
     // ------------------------------------------------------------
-    
+
     pub fn did_change(&self, update: &Update) -> bool {
 		for trait_id in &self.get_traits() {
             for changed_trait in &update.traits {
@@ -475,7 +489,7 @@ mod tests {
         // this is a chat code with ranger hammer variants (soto undocumented feature)
             // 2,               // count
             // 51, 0, 35, 0,    // 2 weapon palettes (u16)
-            // 
+            //
             // 4,               // count
             // 103, 247, 0, 0,  // 4 weapon variants (u32)
             // 221, 246, 0, 0,
@@ -610,5 +624,24 @@ mod tests {
             )
         };
         assert!(build.did_change(&breaking_update));
+    }
+
+    #[test]
+    fn gear_to_geartemplate() {
+        let hardcoded = GearTemplate {
+            armor: [161; 6],                        // berserker's
+            rune:  24836,                           // scholar
+            weapon_types: [0; 4],                   // ? gs, sw/sw
+            weapons: [161; 4],                      // berserker's
+            sigils: [24615, 24597, 24615, 24554],   // force/hydro, force/air
+
+            trinkets: [161; 6],                     // berserker's
+            relic: 101580                           // thief
+        };
+        let raw_bytes = hardcoded.to_bytes().unwrap();
+
+        let (_rest, gear) = GearTemplate::from_bytes((&raw_bytes, 0)).unwrap();
+
+        assert_eq!(gear, hardcoded);
     }
 }
