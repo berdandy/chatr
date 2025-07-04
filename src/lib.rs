@@ -489,27 +489,6 @@ impl BuildTemplate {
 		self.trait_master_3 = trait_ids3.iter().position(|t| t == &traits[7]).unwrap() as u8 - 3 + 1;
 		self.trait_grandmaster_3 = trait_ids3.iter().position(|t| t == &traits[8]).unwrap() as u8 - 6 + 1;
 	}
-
-    // ------------------------------------------------------------
-
-    pub fn did_change(&self, update: &Update) -> bool {
-		for trait_id in &self.get_traits() {
-            for changed_trait in &update.traits {
-                if trait_id == changed_trait {
-                    return true
-                }
-            }
-        }
-		for skill_id in &self.get_skill_ids().unwrap() {
-            for changed_skill in &update.skills {
-                if skill_id == changed_skill {
-                    return true
-                }
-            }
-        }
-        false
-    }
-
 }
 
 const PROFESSIONS: &[&str] = &[
@@ -739,30 +718,5 @@ mod tests {
     fn try_build_template_by_magic_and_fail() {
 		let code = ChatCode::build("[&BucCAAA=]").unwrap(); // same as above test (ie, not a build template)
         BuildTemplate::try_from_chatcode(&code).unwrap();
-    }
-
-    #[test]
-    fn dependency_trait_skill_changed_build() {
-        let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
-
-        // these traits and skills are in the template
-        let breaking_update = Update {
-            id: String::from("Breaking 2025"),
-            traits: vec!(226, 2115),
-            skills: vec!(5570),
-        };
-        assert!(build.did_change(&breaking_update));
-    }
-
-    #[test]
-    fn dependency_no_change_build() {
-        let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
-
-        let safe_update = Update {
-            id: String::from("Safe 20xx"),
-            traits: vec!(123),
-            skills: vec!(5000),
-        };
-        assert_eq!(false, build.did_change(&safe_update));
     }
 }
