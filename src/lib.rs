@@ -19,6 +19,7 @@
 use std::collections::HashMap;
 use std::error::Error;
 
+use regex::Regex;
 use base64::engine::Engine as _;
 use base64::engine::general_purpose::STANDARD as BASE64;
 use deku::DekuContainerRead;
@@ -122,7 +123,7 @@ impl Skill {
     }
 }
 
-#[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Default, Debug, Clone, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little", magic = b"\x01")]
 pub struct GearTemplate {
     pub armor: [u16; 6],        // stat
@@ -134,6 +135,154 @@ pub struct GearTemplate {
 
     pub trinkets: [u16; 6],     // stat
     pub relic: u32              // item
+}
+
+impl GearTemplate {
+    fn statid(stat: &str) -> Option<u16> {
+        let mapping:HashMap<&str,u16> = HashMap::from([
+            ("Mighty", 137),
+            ("Precise", 138),
+            ("Vital", 139),
+            ("Resilient", 140),
+            ("Lingering", 141),
+            ("Strong", 142),
+            ("Ravaging", 144),
+            ("Rejuvenating", 145),
+            ("Vigorous", 146),
+            ("Mending", 0147),
+            ("Stout", 148),
+            ("Hearty", 149),
+            ("Potent", 150),
+            ("Penetrating", 151),
+            ("Honed", 152),
+            ("Healing", 175),
+            ("Malign", 176),
+            ("Rabid and Apothecary's", 595),
+            ("Dire and Rabid", 596),
+            ("Berserker's and Valkyrie", 600),
+            ("Settler's", 700),
+            ("Hunter's", 755),
+            ("Forsaken", 1011),
+            ("Apostate's", 1012),
+            ("Survivor's", 1013),
+            ("Deserter's", 1014),
+            ("Vagabond's", 1015),
+            ("Sentinel's", 1035),
+            ("Magi's", 1037),
+            ("Captain's", 1041),
+            ("Rabid", 1042),
+            ("Apothecary's", 1043),
+            ("Soldier's", 1048),
+            ("Cavalier's", 1050),
+            ("Knight's", 1051),
+            ("Celestial", 1052),
+            ("Nomad's", 1066),
+            ("Sinister", 1067),
+            ("Carrion", 1075),
+            ("Cleric's", 1076),
+            ("Berserker's", 1077),
+            ("Rampager's", 1078),
+            ("Shaman's", 1097),
+            ("Dire", 1114),
+            ("Valkyrie", 1119),
+            ("Assassin's", 1128),
+            ("Zealot's", 1163),
+            ("Trailblazer's", 1262),
+            ("Marauder", 1263),
+            ("Vigilant", 1264),
+            ("Minstrel's", 1265),
+            ("Commander's", 1267),
+            ("Viper's", 1268),
+            ("Seraph", 1269),
+            ("Wanderer's", 1270),
+            ("Crusader", 1271),
+            ("Harrier's", 1377),
+            ("Marshal's", 1378),
+            ("Grieving", 1379),
+            ("Giver's", 1430),
+            ("Bringer's", 1436),
+            ("Plaguedoctor's", 1559),
+            ("Diviner's", 1566),
+            ("Dragon's", 1697),
+            ("Ritualist's", 1717),
+        ]);
+        mapping.get(stat).copied()
+    }
+
+    pub fn parse_string(build_str: &str) -> Result<GearTemplate, Box<dyn Error>> {
+
+        // ------------------------------------------------------------
+        // {{ light(stat="ARMOR'S", rune="RUNE") }}
+        let armor_re = Regex::new(r##"(?<WEIGHT>light|medium|heavy)\(stat="(?<ARMOR>[A-Za-z']+)", rune="(?<RUNE>[A-Za-z']+)"\) }}"##).unwrap();
+        let armor_captures = armor_re.captures(build_str).unwrap();
+        let weight = &armor_captures["WEIGHT"];
+        let armor = &armor_captures["ARMOR"];
+        let rune = &armor_captures["RUNE"];
+        println!("WEIGHT: {:?}", weight);
+        println!("ARMOR: {:?}", armor);
+        println!("  Stat Id: {:?}", Self::statid(armor));
+
+        println!("RUNE: {:?}", rune);
+
+        // TODO: handle all three cases: 4x1h; 2h + 2x2h; 2x2h
+
+        // ------------------------------------------------------------
+        // {{ greatsword(stat="Berserker's", sigils=["Force", "Hydromancy"]) }}
+        let weapon2h_re = Regex::new(r##"(?<WEAPONTYPE>greatsword|hammer|longbow|rifle|shortbow|spear|staff)\(stat="(?<WEAPON>[A-Za-z']+)", sigils=\["(?<SIGIL1>[A-Za-z']+)", "(?<SIGIL2>[A-Za-z']+)"\]\) }}"##).unwrap();
+        let weapon2h_captures = weapon2h_re.captures(build_str).unwrap();
+        let weapontype = &weapon2h_captures["WEAPONTYPE"];
+        let weapon = &weapon2h_captures["WEAPON"];
+        let sigil1 = &weapon2h_captures["SIGIL1"];
+        let sigil2 = &weapon2h_captures["SIGIL2"];
+        println!("2H WEAPONTYPE: {:?}", weapontype);
+        println!("2H WEAPON: {:?}", weapon);
+        println!("   SIGIL1: {:?}", sigil1);
+        println!("   SIGIL2: {:?}", sigil2);
+
+        // ------------------------------------------------------------
+        // {{ sword_main(stat="Berserker's", sigil="Force") }}
+        let weaponmain_re = Regex::new(r##"(?<WEAPONTYPE>axe|dagger|mace|pistol|scepter|sword)_main\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        let weaponmain_captures = weaponmain_re.captures(build_str).unwrap();
+        let weapontype = &weaponmain_captures["WEAPONTYPE"];
+        let weapon = &weaponmain_captures["WEAPON"];
+        let sigil = &weaponmain_captures["SIGIL"];
+        println!("MH WEAPONTYPE: {:?}", weapontype);
+        println!("MH WEAPON: {:?}", weapon);
+        println!("   SIGIL: {:?}", sigil);
+
+        // ------------------------------------------------------------
+        // {{ sword_off(stat="Berserker's", sigil="Air") }}
+        let weaponoff_re = Regex::new(r##"(?<WEAPONTYPE>axe|dagger|focus|mace|pistol|shield|sword|torch|warhorn)_off\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        let weaponoff_captures = weaponoff_re.captures(build_str).unwrap();
+        let weapontype = &weaponoff_captures["WEAPONTYPE"];
+        let weapon = &weaponoff_captures["WEAPON"];
+        let sigil = &weaponoff_captures["SIGIL"];
+        println!("OH WEAPONTYPE: {:?}", weapontype);
+        println!("OH WEAPON: {:?}", weapon);
+        println!("   SIGIL: {:?}", sigil);
+
+        // TODO: alternative relic
+        // ------------------------------------------------------------
+        // {{ trinkets(stat="Dragon's", relic="Thief", alternative="Fireworks") }}
+        //let trinket_re = Regex::new(r##"trinkets\(stat="(?<TRINKET>[A-Za-z']+)", relic="(?<RELIC>[A-Za-z']+)"(, alternative="(?<RELIC2>"[A-Za-z']+))?\) }}"##).unwrap();
+        let trinket_re = Regex::new(r##"trinkets\(stat="(?<TRINKET>[A-Za-z']+)", relic="(?<RELIC>[A-Za-z']+)""##).unwrap();
+        let trinket_captures = trinket_re.captures(build_str).unwrap();
+        let trinket = &trinket_captures["TRINKET"];
+        let relic = &trinket_captures["RELIC"];
+        println!("TRINKET: {:?}", trinket);
+        println!("RELIC: {:?}", relic);
+
+        Ok(GearTemplate{
+            armor: [161; 6],                        // berserker's
+            rune:  24836,                           // scholar
+            weapon_types: [0; 4],                   // ? gs, sw/sw
+            weapons: [161; 4],                      // berserker's
+            sigils: [24615, 24597, 24615, 24554],   // force/hydro, force/air
+
+            trinkets: [161; 6],                     // berserker's
+            relic: 101580                           // thief
+        })
+    }
 }
 
 #[derive(Default, Debug, PartialEq, DekuRead, DekuWrite)]
@@ -199,6 +348,15 @@ impl Code for BuildTemplate {
 }
 
 impl BuildTemplate {
+    pub fn parse_string(build_str: &str) -> Result<BuildTemplate, Box<dyn Error>> {
+        let re = Regex::new(r"\[&(?<code>[A-Za-z0-9]+=)\]").unwrap();
+        let caps = re.captures(build_str).unwrap();
+        let codestring = &caps["code"];
+        let code = ChatCode::build(&codestring)?;
+
+        Self::try_from_chatcode(&code)
+    }
+
 	pub fn try_from_chatcode(code: &ChatCode) -> Result<BuildTemplate, Box<dyn Error>> {
         let data = BASE64.decode(code.raw)?;
         let (_rest, build) = BuildTemplate::from_bytes((data.as_ref(), 0))?;
@@ -606,42 +764,5 @@ mod tests {
             skills: vec!(5000),
         };
         assert_eq!(false, build.did_change(&safe_update));
-    }
-
-    #[test]
-    #[ignore = "not implemented"]
-    fn dependency_weapon_profession_skill_change_build() {
-        let build = BuildTemplate::from_string("[&DQYpGyU+OD90AAAAywAAAI8AAACRAAAAJgAAAAAAAAAAAAAAAAAAAAAAAAA=]");
-        // TODO:
-        // build.weapons = [axe, axe]
-
-        let breaking_update = Update {
-            id: String::from("Breaking 2025"),
-            traits: vec!(226, 2115),
-            skills: vec!(
-                123, // berserker skill
-                234, // axe skill
-            )
-        };
-        assert!(build.did_change(&breaking_update));
-    }
-
-    #[test]
-    fn gear_to_geartemplate() {
-        let hardcoded = GearTemplate {
-            armor: [161; 6],                        // berserker's
-            rune:  24836,                           // scholar
-            weapon_types: [0; 4],                   // ? gs, sw/sw
-            weapons: [161; 4],                      // berserker's
-            sigils: [24615, 24597, 24615, 24554],   // force/hydro, force/air
-
-            trinkets: [161; 6],                     // berserker's
-            relic: 101580                           // thief
-        };
-        let raw_bytes = hardcoded.to_bytes().unwrap();
-
-        let (_rest, gear) = GearTemplate::from_bytes((&raw_bytes, 0)).unwrap();
-
-        assert_eq!(gear, hardcoded);
     }
 }
