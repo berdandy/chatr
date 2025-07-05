@@ -43,7 +43,7 @@
 
 <csr-read-only-do-not-edit/>
 
- - 13 commits contributed to the release over the course of 262 calendar days.
+ - 14 commits contributed to the release over the course of 262 calendar days.
  - 262 days passed between releases.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -55,6 +55,7 @@
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.11 ([`a681fc9`](https://github.com/berdandy/chatr/commit/a681fc939df84c04dfd44be8c9b8508a85120dcb))
     - Skill palette bit size was too small. Increased to 32 ([`ae97051`](https://github.com/berdandy/chatr/commit/ae97051664bfeab2b78d508db5bdc05960ac9909))
     - Added preliminary build notes. Mostly memory things ([`c9e02e6`](https://github.com/berdandy/chatr/commit/c9e02e61f4b4bd4a4eaac6526e7d8784eb7a62da))
     - Removed change tracking. This doesn't really fit the scope of chatr, so will be in a new lib specifically for balance patches called fulcrum ([`c056563`](https://github.com/berdandy/chatr/commit/c0565630e54a4770fa3d1b2ca46af40305d21d85))
@@ -71,6 +72,8 @@
 </details>
 
 ## v0.6.10 (2024-10-15)
+
+<csr-id-64fea68e878b120b3a21ae5b0d579217a5f6dd0f/>
 
 ### Chore
 
@@ -101,6 +104,8 @@
 
 ## v0.6.9 (2024-05-18)
 
+<csr-id-7805262da403aff199f5f33208139eed5844ebef/>
+
 ### Chore
 
  - <csr-id-7805262da403aff199f5f33208139eed5844ebef/> Release chatr version 0.6.9
@@ -126,6 +131,8 @@
 </details>
 
 ## v0.6.8 (2024-05-17)
+
+<csr-id-2af09eca0e3aaf9a46334c94af87665f9258849a/>
 
 ### Chore
 
@@ -243,6 +250,8 @@
 
 ## v0.6.3 (2024-03-21)
 
+<csr-id-7ad98279299e299fd3500793e3ea925cb71e99a8/>
+
 ### Chore
 
  - <csr-id-7ad98279299e299fd3500793e3ea925cb71e99a8/> Release chatr version 0.6.3
@@ -267,6 +276,8 @@
 </details>
 
 ## v0.6.2 (2024-03-20)
+
+<csr-id-f71c279bda5458145730ea9c08321656bdfeff7a/>
 
 ### Chore
 
@@ -293,6 +304,9 @@
 </details>
 
 ## v0.6.1 (2024-03-20)
+
+<csr-id-8c9b566f8d3fb216070c776cbae2b4f3f2d4faa4/>
+<csr-id-c9df56ebcb59fc31d9a5e07bf1347bb2d74302b3/>
 
 ### Chore
 
