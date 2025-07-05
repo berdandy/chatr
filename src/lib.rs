@@ -210,7 +210,6 @@ impl GearTemplate {
     }
 
     pub fn parse_string(build_str: &str) -> Result<GearTemplate, Box<dyn Error>> {
-
         // ------------------------------------------------------------
         // {{ light(stat="ARMOR'S", rune="RUNE") }}
         let armor_re = Regex::new(r##"(?<WEIGHT>light|medium|heavy)\(stat="(?<ARMOR>[A-Za-z']+)", rune="(?<RUNE>[A-Za-z']+)"\) }}"##).unwrap();
@@ -386,11 +385,11 @@ impl BuildTemplate {
 	/// skills:
 	///   build contains palette ids
 	///   palette ids are mapped to ability ids via https://api.guildwars2.com/v2/professions/{PROFESSIONS[build.profession]}
-	pub fn get_skill_ids(&self) -> Result<[u16; 5], Box<dyn Error>> {
+	pub fn get_skill_ids(&self) -> Result<[u32; 5], Box<dyn Error>> {
 		let idx = (self.profession - 1) as usize;
 		let palette = PALETTE_SKILLS_BY_PROFESSION[idx].as_ref().expect("invalid profession palette skill map");
 
-		let skills: [u16 ; 5] = [
+		let skills: [u32 ; 5] = [
 			palette[&self.healing.terrestrial],
 			palette[&self.utility[0].terrestrial],
 			palette[&self.utility[1].terrestrial],
@@ -400,7 +399,7 @@ impl BuildTemplate {
 		Ok(skills)
 	}
 
-	pub fn set_palette_ids_from_skill_ids(&mut self, skill_ids: [u16; 5]) {
+	pub fn set_palette_ids_from_skill_ids(&mut self, skill_ids: [u32; 5]) {
 		let idx = (self.profession - 1) as usize;
 		let palette = SKILLS_PALETTE_BY_PROFESSION[idx].as_ref().expect("invalid profession palette skill map");
 		self.healing.terrestrial = palette[&skill_ids[0]];
@@ -503,7 +502,7 @@ const PROFESSIONS: &[&str] = &[
     "Revenant"
   ];
 
-fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
+fn palette_builder(profession_id: &str) -> HashMap<u16, u32> {
 
 	let professions_str = include_str!("professions.json");
 	let professions: Vec<serde_json::Value> = serde_json::from_str(professions_str).unwrap();
@@ -523,7 +522,7 @@ fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
 		let skills_by_palette = mapping.as_array().expect("invalid mapping in skills_by_palette");
 		skill_palette_map.insert(
 			skills_by_palette[0].as_u64().expect("integer") as u16,
-			skills_by_palette[1].as_u64().expect("integer") as u16
+			skills_by_palette[1].as_u64().expect("integer") as u32
 		);
 	}
 
@@ -531,8 +530,8 @@ fn palette_builder(profession_id: &str) -> HashMap<u16, u16> {
 }
 
 lazy_static! {
-	static ref PALETTE_SKILLS_BY_PROFESSION: [Option<HashMap<u16, u16>> ; 9] = {
-		let mut p2s: [Option<HashMap<u16, u16>> ; 9] = Default::default();
+	static ref PALETTE_SKILLS_BY_PROFESSION: [Option<HashMap<u16, u32>> ; 9] = {
+		let mut p2s: [Option<HashMap<u16, u32>> ; 9] = Default::default();
 		for (i, profession_id) in PROFESSIONS.iter().enumerate() {
 			p2s[i] = Some(palette_builder(profession_id));
 		}
@@ -541,8 +540,8 @@ lazy_static! {
 	};
 
 	// inverted
-	static ref SKILLS_PALETTE_BY_PROFESSION: [Option<HashMap<u16, u16>> ; 9] = {
-		let mut s2p: [Option<HashMap<u16, u16>> ; 9] = Default::default();
+	static ref SKILLS_PALETTE_BY_PROFESSION: [Option<HashMap<u32, u16>> ; 9] = {
+		let mut s2p: [Option<HashMap<u32, u16>> ; 9] = Default::default();
 		for (i, palette_map) in PALETTE_SKILLS_BY_PROFESSION.iter().enumerate() {
 			s2p[i] = palette_map
 				.as_ref()
