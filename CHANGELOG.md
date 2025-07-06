@@ -5,36 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# Unreleased
-
-## Commit Statistics
-
-<csr-read-only-do-not-edit/>
-
- - 5 commits contributed to the release.
- - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
- - 0 issues like '(#ID)' were seen in commit messages
-
-## Commit Details
-
-<csr-read-only-do-not-edit/>
-
-<details><summary>view details</summary>
-
- * **Uncategorized**
-    - Undoing a dumb ([`3567eac`](https://github.com/berdandy/chatr/commit/3567eace3fe361e058747bec4df469b6d9d8e0ef))
-    - Added some release process notes ([`792d3f6`](https://github.com/berdandy/chatr/commit/792d3f6f47097b17c83a611f739542cd49621322))
-    - Changelog ([`1b09543`](https://github.com/berdandy/chatr/commit/1b09543a3678e3ce695109eef9c39500196b80b9))
-    - Release chatr v0.6.14 ([`3ab9c4b`](https://github.com/berdandy/chatr/commit/3ab9c4bab576db97c36cf26e11284344b2e16b78))
-    - Bump to ubuntu 22.04 until cargo dist pushes a new upate ([`af8226e`](https://github.com/berdandy/chatr/commit/af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe))
-</details>
-
 # 0.6.14 (2025-07-06)
 
 <csr-id-db25f64652b48bad121f414436a5ca60736eed01/>
 <csr-id-af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe/>
 
 - Reinitalized cargo-dist workflow files. Fingers crossed.
+
+## Chore
+
+ - <csr-id-e51882894c25ae58ae7dc49061b1fbcd0a22c4ad/> cl
+ - <csr-id-1b09543a3678e3ce695109eef9c39500196b80b9/> changelog
+
+## Other
+
+ - <csr-id-792d3f6f47097b17c83a611f739542cd49621322/> added some release process notes
 
 ## Chore
 
@@ -48,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 4 commits contributed to the release.
- - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 6 commits contributed to the release.
+ - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ## Commit Details
@@ -59,10 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
-    - Release chatr v0.6.14 ([`4f10ae8`](https://github.com/berdandy/chatr/commit/4f10ae836bfd5b0ea8d9a6dc92d81dcbefb29258))
-    - Updating changelog for workflow ([`db25f64`](https://github.com/berdandy/chatr/commit/db25f64652b48bad121f414436a5ca60736eed01))
-    - Adjusting changelogs prior to release of chatr v0.6.14 ([`475097b`](https://github.com/berdandy/chatr/commit/475097b3f6d80eb30337f23b0c5d25750a9d7d32))
-    - Updated workflows for dist ([`9d41688`](https://github.com/berdandy/chatr/commit/9d41688be9f4fd0d2c41f8457b2f2577ac90ad78))
+    - Cl ([`e518828`](https://github.com/berdandy/chatr/commit/e51882894c25ae58ae7dc49061b1fbcd0a22c4ad))
+    - Undoing a dumb ([`3567eac`](https://github.com/berdandy/chatr/commit/3567eace3fe361e058747bec4df469b6d9d8e0ef))
+    - Added some release process notes ([`792d3f6`](https://github.com/berdandy/chatr/commit/792d3f6f47097b17c83a611f739542cd49621322))
+    - Changelog ([`1b09543`](https://github.com/berdandy/chatr/commit/1b09543a3678e3ce695109eef9c39500196b80b9))
+    - Release chatr v0.6.14 ([`3ab9c4b`](https://github.com/berdandy/chatr/commit/3ab9c4bab576db97c36cf26e11284344b2e16b78))
+    - Bump to ubuntu 22.04 until cargo dist pushes a new upate ([`af8226e`](https://github.com/berdandy/chatr/commit/af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe))
 </details>
 
 # 0.6.13 (2025-07-06)
