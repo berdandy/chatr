@@ -1,4 +1,4 @@
-# Version 0.6.12
+# 0.6.12 (2025-07-06)
 
 - Updating runners
 
@@ -36,8 +36,6 @@
 
 - Added library support for bidirectional chatlink conversion
 - Initial automated release
-
-## 0.6.12 (2025-07-06)
 
 ### Commit Statistics
 
