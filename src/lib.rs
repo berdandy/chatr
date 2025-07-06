@@ -709,7 +709,6 @@ mod tests {
             id: 743
         };
         assert_eq!(skill, expected);
-
     }
 
     #[test]
