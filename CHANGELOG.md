@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# 0.6.20 (2025-07-06)
+# 0.6.21 (2025-07-06)
 
 ## Other
 
- - <csr-id-02fef23163379cd35f9c0cdabfb679e134a7e36a/> 22.04 -> latest
+ - <csr-id-14200872e96de3f8d7b110c3fa42cb82f24b2529/> whitespace change to force build
 
 ## Commit Statistics
 
@@ -26,6 +26,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Whitespace change to force build ([`1420087`](https://github.com/berdandy/chatr/commit/14200872e96de3f8d7b110c3fa42cb82f24b2529))
+</details>
+
+# 0.6.20 (2025-07-06)
+
+<csr-id-02fef23163379cd35f9c0cdabfb679e134a7e36a/>
+
+## Other
+
+ - <csr-id-02fef23163379cd35f9c0cdabfb679e134a7e36a/> 22.04 -> latest
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release chatr v0.6.20 ([`c20a44d`](https://github.com/berdandy/chatr/commit/c20a44d643e2a8769e72ecb510ebf8650f6433cf))
     - 22.04 -> latest ([`02fef23`](https://github.com/berdandy/chatr/commit/02fef23163379cd35f9c0cdabfb679e134a7e36a))
 </details>
 
