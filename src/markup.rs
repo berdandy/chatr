@@ -34,7 +34,6 @@ pub fn armory_pet(pet1: u8, pet2: u8) -> Result<String, Box<dyn Error>> {
 			(Some(name), _) => format!("<div class=\"peticon\">{name}</div>"),
 			(_,_) => String::new(),
 		};
-
 		markup += &pet_markup;
 	}
 
