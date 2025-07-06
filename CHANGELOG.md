@@ -5,14 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# Unreleased
+# 0.6.14 (2025-07-06)
+
+- Reinitalized cargo-dist workflow files. Fingers crossed.
+
+## Chore
+
+ - <csr-id-db25f64652b48bad121f414436a5ca60736eed01/> updating changelog for workflow
 
 ## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 2 commits contributed to the release.
- - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 3 commits contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ## Commit Details
@@ -22,13 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Updating changelog for workflow ([`db25f64`](https://github.com/berdandy/chatr/commit/db25f64652b48bad121f414436a5ca60736eed01))
     - Adjusting changelogs prior to release of chatr v0.6.14 ([`475097b`](https://github.com/berdandy/chatr/commit/475097b3f6d80eb30337f23b0c5d25750a9d7d32))
     - Updated workflows for dist ([`9d41688`](https://github.com/berdandy/chatr/commit/9d41688be9f4fd0d2c41f8457b2f2577ac90ad78))
 </details>
-
-# 0.6.14 (2025-07-06)
-
-- Reinitalized cargo-dist workflow files. Fingers crossed.
 
 # 0.6.13 (2025-07-06)
 
