@@ -5,15 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# 0.6.13 (2025-07-06)
-
-- Workflow fix attempts
+# 0.6.14 (2025-07-06)
 
 ## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 1 commit contributed to the release.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -24,6 +22,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Updated workflows for dist ([`9d41688`](https://github.com/berdandy/chatr/commit/9d41688be9f4fd0d2c41f8457b2f2577ac90ad78))
+</details>
+
+# 0.6.13 (2025-07-06)
+
+- Workflow fix attempts
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 4 commits contributed to the release.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release chatr v0.6.13 ([`5061780`](https://github.com/berdandy/chatr/commit/5061780926d73966cc81f7f6002d746b1cbb18e4))
     - CL ([`77e7a26`](https://github.com/berdandy/chatr/commit/77e7a261d608dd7de2a2ce36bb13e9520f970676))
     - CL ([`894bf7b`](https://github.com/berdandy/chatr/commit/894bf7b2de9d79720979926fbec4f67ec907a03f))
     - Removing stale workflow file to reset release ([`726532e`](https://github.com/berdandy/chatr/commit/726532e02277f1fc0a3bc8265147a476af25402b))
