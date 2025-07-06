@@ -1,3 +1,7 @@
+# Version 0.6.12
+
+- Updating runners
+
 # Version 0.6.11 (2024-10-22)
 
 - Added -D flag for dependency generation. JSON output format
@@ -33,6 +37,27 @@
 - Added library support for bidirectional chatlink conversion
 - Initial automated release
 
+## Unreleased
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 day passed between releases.
+ - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Runner to ubuntu-latest ([`76ff386`](https://github.com/berdandy/chatr/commit/76ff386133816260f3b5d8ce4c12a381dd6972c7))
+</details>
+
 ## v0.6.11 (2025-07-04)
 
 ### New Features
@@ -43,7 +68,7 @@
 
 <csr-read-only-do-not-edit/>
 
- - 14 commits contributed to the release over the course of 262 calendar days.
+ - 15 commits contributed to the release over the course of 262 calendar days.
  - 262 days passed between releases.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -55,6 +80,7 @@
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.11 ([`b3c5cfe`](https://github.com/berdandy/chatr/commit/b3c5cfed02e46efc818961bf4e79e0ccc8815947))
     - Release chatr v0.6.11 ([`a681fc9`](https://github.com/berdandy/chatr/commit/a681fc939df84c04dfd44be8c9b8508a85120dcb))
     - Skill palette bit size was too small. Increased to 32 ([`ae97051`](https://github.com/berdandy/chatr/commit/ae97051664bfeab2b78d508db5bdc05960ac9909))
     - Added preliminary build notes. Mostly memory things ([`c9e02e6`](https://github.com/berdandy/chatr/commit/c9e02e61f4b4bd4a4eaac6526e7d8784eb7a62da))
