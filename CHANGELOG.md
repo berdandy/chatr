@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # 0.6.14 (2025-07-06)
 
+<csr-id-db25f64652b48bad121f414436a5ca60736eed01/>
+
 - Reinitalized cargo-dist workflow files. Fingers crossed.
+
+## Chore
+
+ - <csr-id-af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe/> Bump to ubuntu 22.04 until cargo dist pushes a new upate
 
 ## Chore
 
@@ -17,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 1 commit contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -28,9 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
-    - Updating changelog for workflow ([`db25f64`](https://github.com/berdandy/chatr/commit/db25f64652b48bad121f414436a5ca60736eed01))
-    - Adjusting changelogs prior to release of chatr v0.6.14 ([`475097b`](https://github.com/berdandy/chatr/commit/475097b3f6d80eb30337f23b0c5d25750a9d7d32))
-    - Updated workflows for dist ([`9d41688`](https://github.com/berdandy/chatr/commit/9d41688be9f4fd0d2c41f8457b2f2577ac90ad78))
+    - Bump to ubuntu 22.04 until cargo dist pushes a new upate ([`af8226e`](https://github.com/berdandy/chatr/commit/af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe))
 </details>
 
 # 0.6.13 (2025-07-06)
