@@ -7,16 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Unreleased
 
-## Chore
-
- - <csr-id-af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe/> Bump to ubuntu 22.04 until cargo dist pushes a new upate
-
 ## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 2 commits contributed to the release.
- - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 5 commits contributed to the release.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ## Commit Details
@@ -26,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Undoing a dumb ([`3567eac`](https://github.com/berdandy/chatr/commit/3567eace3fe361e058747bec4df469b6d9d8e0ef))
+    - Added some release process notes ([`792d3f6`](https://github.com/berdandy/chatr/commit/792d3f6f47097b17c83a611f739542cd49621322))
+    - Changelog ([`1b09543`](https://github.com/berdandy/chatr/commit/1b09543a3678e3ce695109eef9c39500196b80b9))
     - Release chatr v0.6.14 ([`3ab9c4b`](https://github.com/berdandy/chatr/commit/3ab9c4bab576db97c36cf26e11284344b2e16b78))
     - Bump to ubuntu 22.04 until cargo dist pushes a new upate ([`af8226e`](https://github.com/berdandy/chatr/commit/af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe))
 </details>
