@@ -5,7 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.6.16 (2025-07-06)
+
+## Other
+
+ - <csr-id-4efe8826514cf5731e31801ab743bb77d369245b/> added ci ignore until cargo-dist releases
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Added ci ignore until cargo-dist releases ([`4efe882`](https://github.com/berdandy/chatr/commit/4efe8826514cf5731e31801ab743bb77d369245b))
+</details>
+
 # 0.6.15 (2025-07-06)
+
+<csr-id-e51882894c25ae58ae7dc49061b1fbcd0a22c4ad/>
+<csr-id-1b09543a3678e3ce695109eef9c39500196b80b9/>
+<csr-id-af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe/>
+<csr-id-792d3f6f47097b17c83a611f739542cd49621322/>
 
 ## Chore
 
@@ -25,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 8 commits contributed to the release.
+ - 9 commits contributed to the release.
  - 5 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -36,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.15 ([`2b1e6df`](https://github.com/berdandy/chatr/commit/2b1e6dfbfde69a0158f2fee1e6539175c87f7af7))
     - Slight change to trigger release ([`f706de0`](https://github.com/berdandy/chatr/commit/f706de0d7d9f46ec49853d9502454e5b9cef31c0))
     - Release chatr v0.6.14 ([`fb4838c`](https://github.com/berdandy/chatr/commit/fb4838c4f6e8d45163b0e4ecd09df9285d45b0d7))
     - Cl ([`e518828`](https://github.com/berdandy/chatr/commit/e51882894c25ae58ae7dc49061b1fbcd0a22c4ad))
