@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Chore
 
  - <csr-id-af8226e9542fbfe5a9e1102c8adcd9e6fb1aa7fe/> Bump to ubuntu 22.04 until cargo dist pushes a new upate
+
+## Chore
+
  - <csr-id-db25f64652b48bad121f414436a5ca60736eed01/> updating changelog for workflow
 
 ## Commit Statistics
