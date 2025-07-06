@@ -5,7 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.6.23 (2025-07-06)
+
+## Other
+
+ - <csr-id-d78c4a5bf865933d0cf50a23331dd510d4c6f341/> switched to astral's fork of cargo dist
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Switched to astral's fork of cargo dist ([`d78c4a5`](https://github.com/berdandy/chatr/commit/d78c4a5bf865933d0cf50a23331dd510d4c6f341))
+</details>
+
 # 0.6.22 (2025-07-06)
+
+<csr-id-004b96f07dff84b46dac45c0558a3ecd92d63be6/>
 
 ## New Features
 
@@ -19,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 2 commits contributed to the release.
+ - 3 commits contributed to the release.
  - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -30,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.22 ([`ebc6948`](https://github.com/berdandy/chatr/commit/ebc6948ab0d37b23e28785bfa0c4c76b8d82d1c6))
     - Offline cache updated to latest api grab ([`6c40062`](https://github.com/berdandy/chatr/commit/6c4006224e1358f572b538142acc4e37292e90d3))
     - Adding a publish script so cargo smart-release doesn't fight with cargo dist ([`004b96f`](https://github.com/berdandy/chatr/commit/004b96f07dff84b46dac45c0558a3ecd92d63be6))
 </details>
