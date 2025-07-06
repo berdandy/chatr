@@ -37,13 +37,13 @@
 - Added library support for bidirectional chatlink conversion
 - Initial automated release
 
-## Unreleased
+## 0.6.12 (2025-07-06)
 
 ### Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 1 day passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -55,6 +55,7 @@
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Changelog ([`56ee6fd`](https://github.com/berdandy/chatr/commit/56ee6fd506d99cf8c76b77631a5f160cba6d517e))
     - Runner to ubuntu-latest ([`76ff386`](https://github.com/berdandy/chatr/commit/76ff386133816260f3b5d8ce4c12a381dd6972c7))
 </details>
 

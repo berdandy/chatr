@@ -1,7 +1,7 @@
 [package]
 name = "chatr"
 description = "A tool/lib to process and convert Guild Wars 2 build chat codes into other formats"
-version = "0.6.11"
+version = "0.6.12"
 authors = ["Andy Berdan <contact@berdan.ca>"]
 edition = "2021"
 repository = "https://github.com/berdandy/chatr"
