@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -22,8 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - CL ([`894bf7b`](https://github.com/berdandy/chatr/commit/894bf7b2de9d79720979926fbec4f67ec907a03f))
     - Removing stale workflow file to reset release ([`726532e`](https://github.com/berdandy/chatr/commit/726532e02277f1fc0a3bc8265147a476af25402b))
 </details>
+
+# 0.6.13 (2025-07-06)
+
+- Workflow fix attempts
 
 # 0.6.12 (2025-07-06)
 
