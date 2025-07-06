@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# 0.6.19 (2025-07-06)
+# 0.6.20 (2025-07-06)
 
 ## Other
 
- - <csr-id-b744db8250a831135fd579e45d9cce168ae0e7c0/> attempt to upgrade runner v2
+ - <csr-id-02fef23163379cd35f9c0cdabfb679e134a7e36a/> 22.04 -> latest
 
 ## Commit Statistics
 
@@ -26,6 +26,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - 22.04 -> latest ([`02fef23`](https://github.com/berdandy/chatr/commit/02fef23163379cd35f9c0cdabfb679e134a7e36a))
+</details>
+
+# 0.6.19 (2025-07-06)
+
+<csr-id-b744db8250a831135fd579e45d9cce168ae0e7c0/>
+
+## Other
+
+ - <csr-id-b744db8250a831135fd579e45d9cce168ae0e7c0/> attempt to upgrade runner v2
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Release chatr v0.6.19 ([`478a7d1`](https://github.com/berdandy/chatr/commit/478a7d1337bf7d480f6daacbd0b0c7dd30394d44))
     - Attempt to upgrade runner v2 ([`b744db8`](https://github.com/berdandy/chatr/commit/b744db8250a831135fd579e45d9cce168ae0e7c0))
 </details>
 
