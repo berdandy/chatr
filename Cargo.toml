@@ -9,6 +9,12 @@ categories = ["command-line-utilities"]
 keywords = ["guild-wars-2", "gw2", "chatcode"]
 license = "MIT OR Apache-2.0"
 
+[package.metadata.wix]
+upgrade-guid = "78968EC3-8733-4A8C-B99C-3FF6A60298CE"
+path-guid = "5BD08CA1-A754-4989-9C0C-B3A29F888654"
+license = false
+eula = false
+
 [dependencies]
 base64 = "0.21.5"
 deku = "0.16.0"
@@ -22,16 +28,3 @@ serde_json = "1.0.107"
 [profile.dist]
 inherits = "release"
 lto = "thin"
-
-# Config for 'cargo dist'
-[workspace.metadata.dist]
-# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
-cargo-dist-version = "0.11.1"
-# CI backends to support
-ci = ["github"]
-# The installers to generate for each app
-installers = []
-# Target platforms to build apps for (Rust target-triple syntax)
-targets = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
-# Publish jobs to run in CI
-pr-run-mode = "plan"
