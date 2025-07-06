@@ -1,3 +1,10 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 # 0.6.12 (2025-07-06)
 
 - Updating runners
@@ -37,33 +44,35 @@
 - Added library support for bidirectional chatlink conversion
 - Initial automated release
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 2 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 1 day passed between releases.
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Changelog ([`20cdad6`](https://github.com/berdandy/chatr/commit/20cdad6a0db5dd496dcb7112794bda539780034f))
+    - Adjusting changelogs prior to release of chatr v0.6.12 ([`13a4e16`](https://github.com/berdandy/chatr/commit/13a4e16399316893973d547510c2b2a16ef4bb7b))
     - Changelog ([`56ee6fd`](https://github.com/berdandy/chatr/commit/56ee6fd506d99cf8c76b77631a5f160cba6d517e))
     - Runner to ubuntu-latest ([`76ff386`](https://github.com/berdandy/chatr/commit/76ff386133816260f3b5d8ce4c12a381dd6972c7))
 </details>
 
-## v0.6.11 (2025-07-04)
+# v0.6.11 (2025-07-04)
 
-### New Features
+## New Features
 
  - <csr-id-ae97051664bfeab2b78d508db5bdc05960ac9909/> skill palette bit size was too small. Increased to 32
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -72,7 +81,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -96,7 +105,7 @@
     - Added Code trait ([`271392a`](https://github.com/berdandy/chatr/commit/271392ad6ce2bb9597744e07792de373dc341a0f))
 </details>
 
-## v0.6.10 (2024-10-15)
+# v0.6.10 (2024-10-15)
 
 <csr-id-64fea68e878b120b3a21ae5b0d579217a5f6dd0f/>
 
@@ -104,7 +113,7 @@
 
  - <csr-id-64fea68e878b120b3a21ae5b0d579217a5f6dd0f/> Release chatr version 0.6.10
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -113,7 +122,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -127,7 +136,7 @@
     - Bump openssl from 0.10.62 to 0.10.66 ([`39098b1`](https://github.com/berdandy/chatr/commit/39098b164c4f138e6e39c76cd19a21dde2d2f367))
 </details>
 
-## v0.6.9 (2024-05-18)
+# v0.6.9 (2024-05-18)
 
 <csr-id-7805262da403aff199f5f33208139eed5844ebef/>
 
@@ -135,7 +144,7 @@
 
  - <csr-id-7805262da403aff199f5f33208139eed5844ebef/> Release chatr version 0.6.9
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -143,7 +152,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -155,7 +164,7 @@
     - Only build json if build.rs changed ([`389663c`](https://github.com/berdandy/chatr/commit/389663c56c85986d47e5f3000c765ead76fd2e22))
 </details>
 
-## v0.6.8 (2024-05-17)
+# v0.6.8 (2024-05-17)
 
 <csr-id-2af09eca0e3aaf9a46334c94af87665f9258849a/>
 
@@ -163,7 +172,7 @@
 
  - <csr-id-2af09eca0e3aaf9a46334c94af87665f9258849a/> Release chatr version 0.6.8
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -172,7 +181,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -187,9 +196,9 @@
     - Clippy happy joy fun time ([`6d5d367`](https://github.com/berdandy/chatr/commit/6d5d367544c781eacf0921ea615803d8c0315b5f))
 </details>
 
-## v0.6.7 (2024-04-02)
+# v0.6.7 (2024-04-02)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -197,7 +206,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -207,9 +216,9 @@
     - Improved error reporting ([`43fb636`](https://github.com/berdandy/chatr/commit/43fb6369191ac123ed9468939e62d90dc451134f))
 </details>
 
-## v0.6.6 (2024-04-02)
+# v0.6.6 (2024-04-02)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -218,7 +227,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -228,9 +237,9 @@
     - Added legends offline data ([`b29c33b`](https://github.com/berdandy/chatr/commit/b29c33bb9d62492eb3749abdcedee5d9eff877d6))
 </details>
 
-## v0.6.5 (2024-04-01)
+# v0.6.5 (2024-04-01)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -239,7 +248,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -251,9 +260,9 @@
     - Changed latest to know datestamp ([`b7da3c0`](https://github.com/berdandy/chatr/commit/b7da3c0d24e9889dde7eff5eb183a5627a57e22e))
 </details>
 
-## v0.6.4 (2024-03-22)
+# v0.6.4 (2024-03-22)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -262,7 +271,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -273,7 +282,7 @@
     - Changed chatr to output css class instead of embedded style ([`35ff5f5`](https://github.com/berdandy/chatr/commit/35ff5f5f8dc6df22ba59a02990846844d0137f71))
 </details>
 
-## v0.6.3 (2024-03-21)
+# v0.6.3 (2024-03-21)
 
 <csr-id-7ad98279299e299fd3500793e3ea925cb71e99a8/>
 
@@ -281,7 +290,7 @@
 
  - <csr-id-7ad98279299e299fd3500793e3ea925cb71e99a8/> Release chatr version 0.6.3
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -289,7 +298,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -300,7 +309,7 @@
     - Added pet icons ([`aa01b99`](https://github.com/berdandy/chatr/commit/aa01b99b425b9ba63147031e6f500f095eb31e63))
 </details>
 
-## v0.6.2 (2024-03-20)
+# v0.6.2 (2024-03-20)
 
 <csr-id-f71c279bda5458145730ea9c08321656bdfeff7a/>
 
@@ -308,7 +317,7 @@
 
  - <csr-id-f71c279bda5458145730ea9c08321656bdfeff7a/> Release chatr version 0.6.2
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -316,7 +325,7 @@
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -328,7 +337,7 @@
     - Actually, I do want to publish to crates ([`b524921`](https://github.com/berdandy/chatr/commit/b5249215780e023ee13cba95d79c781be244c601))
 </details>
 
-## v0.6.1 (2024-03-20)
+# v0.6.1 (2024-03-20)
 
 <csr-id-8c9b566f8d3fb216070c776cbae2b4f3f2d4faa4/>
 <csr-id-c9df56ebcb59fc31d9a5e07bf1347bb2d74302b3/>
@@ -338,7 +347,7 @@
  - <csr-id-8c9b566f8d3fb216070c776cbae2b4f3f2d4faa4/> Release chatr version 0.6.1
  - <csr-id-c9df56ebcb59fc31d9a5e07bf1347bb2d74302b3/> added automated release packaging
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -347,7 +356,7 @@
  - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -388,9 +397,9 @@
     - Update README.md ([`0466476`](https://github.com/berdandy/chatr/commit/046647637e4e19da1593885be0549b3c8ba944cd))
 </details>
 
-## v0.2.1 (2023-08-09)
+# v0.2.1 (2023-08-09)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -399,7 +408,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -414,9 +423,9 @@
     - Bump openssl from 0.10.52 to 0.10.55 ([`6e1426c`](https://github.com/berdandy/chatr/commit/6e1426cb109b0e0e7127fd53b783f389f60b9192))
 </details>
 
-## v0.2.0 (2023-05-06)
+# v0.2.0 (2023-05-06)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -425,7 +434,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -442,9 +451,9 @@
     - Update README.md ([`e2774a2`](https://github.com/berdandy/chatr/commit/e2774a2edb02a4b567f6886e0d2dbb0152fb38fc))
 </details>
 
-## v0.1.0 (2022-05-04)
+# v0.1.0 (2022-05-04)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -453,7 +462,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -465,9 +474,9 @@
     - Update README.md ([`e6760a8`](https://github.com/berdandy/chatr/commit/e6760a8db048bd4533beaacac36b8194bf7a8e0b))
 </details>
 
-## v0.0.3 (2022-04-09)
+# v0.0.3 (2022-04-09)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -476,7 +485,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
@@ -489,9 +498,9 @@
     - Update README.md ([`5fc71b6`](https://github.com/berdandy/chatr/commit/5fc71b6c059910807a8572951c4add3b1ef4ce57))
 </details>
 
-## v0.0.2 (2022-04-06)
+# v0.0.2 (2022-04-06)
 
-### Commit Statistics
+## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
@@ -499,7 +508,7 @@
  - 0 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
-### Commit Details
+## Commit Details
 
 <csr-read-only-do-not-edit/>
 
