@@ -5,7 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.6.22 (2025-07-06)
+
+## New Features
+
+ - <csr-id-6c4006224e1358f572b538142acc4e37292e90d3/> offline cache updated to latest api grab
+
+## Other
+
+ - <csr-id-004b96f07dff84b46dac45c0558a3ecd92d63be6/> adding a publish script so cargo smart-release doesn't fight with cargo dist
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 2 commits contributed to the release.
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Offline cache updated to latest api grab ([`6c40062`](https://github.com/berdandy/chatr/commit/6c4006224e1358f572b538142acc4e37292e90d3))
+    - Adding a publish script so cargo smart-release doesn't fight with cargo dist ([`004b96f`](https://github.com/berdandy/chatr/commit/004b96f07dff84b46dac45c0558a3ecd92d63be6))
+</details>
+
 # 0.6.21 (2025-07-06)
+
+<csr-id-14200872e96de3f8d7b110c3fa42cb82f24b2529/>
 
 ## Other
 
@@ -15,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.21 ([`824bc32`](https://github.com/berdandy/chatr/commit/824bc325462653304f1bdf3a6f0a37dfd2c12134))
     - Whitespace change to force build ([`1420087`](https://github.com/berdandy/chatr/commit/14200872e96de3f8d7b110c3fa42cb82f24b2529))
 </details>
 
