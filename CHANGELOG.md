@@ -5,7 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.6.24 (2025-07-08)
+
+## Chore
+
+ - <csr-id-30c79c06f1a7fccb68050b47822ee3abdf474e5a/> added professions json with new skill data. Still need to write data builder for it
+
+## New Features
+
+ - <csr-id-fbeff2a4eb87d368f51236f8c66d9d6c13aa554c/> improved gear template parsing of build files
+ - <csr-id-37d9bd247a340bc4983718c3481300c916d897fc/> added necromancer weapon type parsing of builds (other professions and less hardcoding to follow)
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 3 commits contributed to the release.
+ - 1 day passed between releases.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Improved gear template parsing of build files ([`fbeff2a`](https://github.com/berdandy/chatr/commit/fbeff2a4eb87d368f51236f8c66d9d6c13aa554c))
+    - Added professions json with new skill data. Still need to write data builder for it ([`30c79c0`](https://github.com/berdandy/chatr/commit/30c79c06f1a7fccb68050b47822ee3abdf474e5a))
+    - Added necromancer weapon type parsing of builds (other professions and less hardcoding to follow) ([`37d9bd2`](https://github.com/berdandy/chatr/commit/37d9bd247a340bc4983718c3481300c916d897fc))
+</details>
+
 # 0.6.23 (2025-07-06)
+
+<csr-id-d78c4a5bf865933d0cf50a23331dd510d4c6f341/>
 
 ## Other
 
@@ -15,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -26,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.23 ([`04a979d`](https://github.com/berdandy/chatr/commit/04a979dca2c6ef8d9c81d501cd308f6d8897473c))
     - Switched to astral's fork of cargo dist ([`d78c4a5`](https://github.com/berdandy/chatr/commit/d78c4a5bf865933d0cf50a23331dd510d4c6f341))
 </details>
 
