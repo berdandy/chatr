@@ -16,7 +16,8 @@
 //! ```
 //!
 
-use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet};
 use std::error::Error;
 
 use regex::Regex;
@@ -138,120 +139,79 @@ pub struct GearTemplate<'a> {
     pub relic: u32              // item
 }
 
-const _GUARDIAN:     u8 = 1;
-const _WARRIOR:      u8 = 2;
-const _ENGINEER:     u8 = 3;
-const _RANGER:       u8 = 4;
-const _THIEF:        u8 = 5;
-const _ELEMENTALIST: u8 = 6;
-const _MESMER:       u8 = 7;
-const NECROMANCER:  u8 = 8;
-const _REVENANT:     u8 = 9;
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WeaponSkill {
+    pub id: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ProfWeapon {
+    pub skills: Vec<WeaponSkill>,
+}
+
+// /v2/professions
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Profession {
+    pub id: String,
+    pub name: String,
+    pub skills_by_palette: Vec<Vec<u32>>,
+    pub weapons: HashMap<String, ProfWeapon>,
+}
+
+fn weapon_skillmap_builder(profession: u8) -> HashMap<String, Vec<u32>> {
+	let professions_str = include_str!("professions.json");
+	let professions: Vec<Profession> = serde_json::from_str(professions_str).unwrap();
+
+    let profession_id = PROFESSIONS[(profession - 1) as usize];
+	let prof = professions
+		.iter()
+		.find(|&s| s.name == profession_id).unwrap();
+
+	// Parse the string of data into serde_json::Value.
+	// let v: serde_json::Value = serde_json::from_str(&palette_data).unwrap();
+
+    let mut skillmap = HashMap::new();
+	for (name, weapon) in &prof.weapons {
+        let mut skills = vec!();
+        for skill in &weapon.skills {
+            skills.push(skill.id);
+        }
+        skillmap.insert(name.to_lowercase(), skills);
+	}
+
+    skillmap
+}
 
 impl<'a> GearTemplate<'a> {
     pub fn get_weapon_skills(&self, profession: u8) -> Vec<u32>{
-        // TODO: get from /v2/professions api ("weapons")
-        // (profession, weapontype) -> skills[]
-        let skillmap: HashMap<(u8,&str), Vec<u32>> = HashMap::from([
-            ((NECROMANCER, "axe_main"), vec!(10561, 10528, 10701)),
-            ((NECROMANCER, "dagger_main"), vec!(10702, 69302, 10529)),
-            ((NECROMANCER, "dagger_off"), vec!(10705, 10706)),
-            ((NECROMANCER, "focus_off"), vec!(55050, 10555)),
-            ((NECROMANCER, "greatsword"), vec!(29705, 30799, 29867, 30163, 30860, 29855, 29740)),
-            ((NECROMANCER, "spear"), vec!(73012, 10692, 73068, 10694, 73013, 10619, 73107, 10695, 73007, 10616)),
-            ((NECROMANCER, "pistol_main"), vec!(62517, 62513, 62511)),
-            ((NECROMANCER, "scepter_main"), vec!(10698, 10532, 10709)),
-            ((NECROMANCER, "staff"), vec!(10596, 19117, 10605, 19116, 19115)),
-            ((NECROMANCER, "sword_main"), vec!(71986, 71850, 72051, 71883, 71914, 71799, 71871)),
-            ((NECROMANCER, "sword_off"), vec!(71813, 72068, 71998, 71926)),
-            ((NECROMANCER, "torch_off"), vec!(45846, 44296)),
-            ((NECROMANCER, "trident"), vec!(10623, 10624, 10625, 10628, 10629)),
-            ((NECROMANCER, "warhorn_off"), vec!(10556, 10557)),
-        ]);
 
-        let mut weapon_skills = vec!();
+        let skillmap = weapon_skillmap_builder(profession);
+        let mut weapon_skills = HashSet::new();
         for weapon_type in self.weapon_types {
-            let k = (profession, weapon_type);
-            if let Some(mapping) = skillmap.get(&k) {
+            let key = String::from(weapon_type).to_lowercase();
+            if let Some(mapping) = skillmap.get(&key) {
                 weapon_skills.extend(mapping);
             }
         }
 
-        weapon_skills
+        Vec::from_iter(weapon_skills)
     }
 
-    /*
-    fn statid(stat: &str) -> Option<u16> {
+    fn _statid(stat: &str) -> Option<u16> {
         let mapping: HashMap<&str,u16> = HashMap::from([
-            ("Mighty", 137),
-            ("Precise", 138),
-            ("Vital", 139),
-            ("Resilient", 140),
-            ("Lingering", 141),
-            ("Strong", 142),
-            ("Ravaging", 144),
-            ("Rejuvenating", 145),
-            ("Vigorous", 146),
-            ("Mending", 0147),
-            ("Stout", 148),
-            ("Hearty", 149),
-            ("Potent", 150),
-            ("Penetrating", 151),
-            ("Honed", 152),
-            ("Healing", 175),
-            ("Malign", 176),
-            ("Rabid and Apothecary's", 595),
-            ("Dire and Rabid", 596),
-            ("Berserker's and Valkyrie", 600),
-            ("Settler's", 700),
-            ("Hunter's", 755),
-            ("Forsaken", 1011),
-            ("Apostate's", 1012),
-            ("Survivor's", 1013),
-            ("Deserter's", 1014),
-            ("Vagabond's", 1015),
-            ("Sentinel's", 1035),
-            ("Magi's", 1037),
-            ("Captain's", 1041),
-            ("Rabid", 1042),
-            ("Apothecary's", 1043),
-            ("Soldier's", 1048),
-            ("Cavalier's", 1050),
-            ("Knight's", 1051),
-            ("Celestial", 1052),
-            ("Nomad's", 1066),
-            ("Sinister", 1067),
-            ("Carrion", 1075),
-            ("Cleric's", 1076),
-            ("Berserker's", 1077),
-            ("Rampager's", 1078),
-            ("Shaman's", 1097),
-            ("Dire", 1114),
-            ("Valkyrie", 1119),
-            ("Assassin's", 1128),
-            ("Zealot's", 1163),
-            ("Trailblazer's", 1262),
-            ("Marauder", 1263),
-            ("Vigilant", 1264),
-            ("Minstrel's", 1265),
-            ("Commander's", 1267),
-            ("Viper's", 1268),
-            ("Seraph", 1269),
-            ("Wanderer's", 1270),
-            ("Crusader", 1271),
-            ("Harrier's", 1377),
-            ("Marshal's", 1378),
-            ("Grieving", 1379),
-            ("Giver's", 1430),
-            ("Bringer's", 1436),
-            ("Plaguedoctor's", 1559),
-            ("Diviner's", 1566),
-            ("Dragon's", 1697),
+            ("Mighty", 137), ("Precise", 138), ("Vital", 139), ("Resilient", 140), ("Lingering", 141), ("Strong", 142), ("Ravaging", 144), ("Rejuvenating", 145),
+            ("Vigorous", 146), ("Mending", 0147), ("Stout", 148), ("Hearty", 149), ("Potent", 150), ("Penetrating", 151), ("Honed", 152), ("Healing", 175),
+            ("Malign", 176), ("Rabid and Apothecary's", 595), ("Dire and Rabid", 596), ("Berserker's and Valkyrie", 600), ("Settler's", 700), ("Hunter's", 755),
+            ("Forsaken", 1011), ("Apostate's", 1012), ("Survivor's", 1013), ("Deserter's", 1014), ("Vagabond's", 1015), ("Sentinel's", 1035), ("Magi's", 1037),
+            ("Captain's", 1041), ("Rabid", 1042), ("Apothecary's", 1043), ("Soldier's", 1048), ("Cavalier's", 1050), ("Knight's", 1051), ("Celestial", 1052),
+            ("Nomad's", 1066), ("Sinister", 1067), ("Carrion", 1075), ("Cleric's", 1076), ("Berserker's", 1077), ("Rampager's", 1078), ("Shaman's", 1097),
+            ("Dire", 1114), ("Valkyrie", 1119), ("Assassin's", 1128), ("Zealot's", 1163), ("Trailblazer's", 1262), ("Marauder", 1263), ("Vigilant", 1264),
+            ("Minstrel's", 1265), ("Commander's", 1267), ("Viper's", 1268), ("Seraph", 1269), ("Wanderer's", 1270), ("Crusader", 1271), ("Harrier's", 1377),
+            ("Marshal's", 1378), ("Grieving", 1379), ("Giver's", 1430), ("Bringer's", 1436), ("Plaguedoctor's", 1559), ("Diviner's", 1566), ("Dragon's", 1697),
             ("Ritualist's", 1717),
         ]);
         mapping.get(stat).copied()
     }
-    */
 
     pub fn parse_string(build_str: &str) -> Result<GearTemplate, Box<dyn Error>> {
 
@@ -262,12 +222,12 @@ impl<'a> GearTemplate<'a> {
             weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
         }
 
-        let weaponmain_re = Regex::new(r##"(?<WEAPONTYPE>(axe|dagger|mace|pistol|scepter|sword)_main)\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        let weaponmain_re = Regex::new(r##"(?<WEAPONTYPE>axe|dagger|mace|pistol|scepter|sword)_main\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
         for caps in weaponmain_re.captures_iter(build_str) {
             weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
         }
 
-        let weaponoff_re = Regex::new(r##"(?<WEAPONTYPE>(axe|dagger|focus|mace|pistol|shield|sword|torch|warhorn)_off)\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        let weaponoff_re = Regex::new(r##"(?<WEAPONTYPE>axe|dagger|focus|mace|pistol|shield|sword|torch|warhorn)_off\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
         for caps in weaponoff_re.captures_iter(build_str) {
             weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
         }
@@ -415,8 +375,8 @@ impl Code for BuildTemplate {
 
 impl BuildTemplate {
     pub fn parse_string(build_str: &str) -> Result<BuildTemplate, Box<dyn Error>> {
-        let re = Regex::new(r"\[&(?<code>[A-Za-z0-9]+=)\]").unwrap();
-        let caps = re.captures(build_str).unwrap();
+        let re = Regex::new(r"\[&(?<code>[A-Za-z0-9\+=/]+)\]").unwrap();
+        let caps = re.captures(build_str).ok_or("no build code")?;
         let codestring = &caps["code"];
         let code = ChatCode::build(&codestring)?;
 
