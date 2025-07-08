@@ -608,16 +608,6 @@ impl<'a> ChatCode<'a> {
 	}
 }
 
-/// data structure for balance updates. Each value indicates something that
-/// was changed in this balance patch
-pub struct Update {
-    pub id: String, // "month year" -- matches balance string in aw2
-    pub skills: Vec<u16>, // incl. weapon skills, profession skills, etc
-    pub traits: Vec<u16>,
-}
-
-/// data structure for build templates, as extracted from chat codes
-
 #[cfg(test)]
 mod tests {
     use base64::engine::Engine as _;
