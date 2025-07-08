@@ -123,13 +123,14 @@ impl Skill {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, DekuRead, DekuWrite)]
-#[deku(endian = "little", magic = b"\x01")]
-pub struct GearTemplate {
+// #[derive(Default, Debug, Clone, PartialEq, DekuRead, DekuWrite)]
+// #[deku(endian = "little", magic = b"\x01")]
+#[derive(Default, Debug, Clone, PartialEq)]
+pub struct GearTemplate<'a> {
     pub armor: [u16; 6],        // stat
     pub rune: u32,              // item
 
-    pub weapon_types: [u32; 4], // item
+    pub weapon_types: [&'a str; 4], // item
     pub weapons: [u16; 4],      // stat
     pub sigils: [u32; 4],       // item
 
@@ -137,9 +138,51 @@ pub struct GearTemplate {
     pub relic: u32              // item
 }
 
-impl GearTemplate {
+const _GUARDIAN:     u8 = 1;
+const _WARRIOR:      u8 = 2;
+const _ENGINEER:     u8 = 3;
+const _RANGER:       u8 = 4;
+const _THIEF:        u8 = 5;
+const _ELEMENTALIST: u8 = 6;
+const _MESMER:       u8 = 7;
+const NECROMANCER:  u8 = 8;
+const _REVENANT:     u8 = 9;
+
+impl<'a> GearTemplate<'a> {
+    pub fn get_weapon_skills(&self, profession: u8) -> Vec<u32>{
+        // TODO: get from /v2/professions api ("weapons")
+        // (profession, weapontype) -> skills[]
+        let skillmap: HashMap<(u8,&str), Vec<u32>> = HashMap::from([
+            ((NECROMANCER, "axe_main"), vec!(10561, 10528, 10701)),
+            ((NECROMANCER, "dagger_main"), vec!(10702, 69302, 10529)),
+            ((NECROMANCER, "dagger_off"), vec!(10705, 10706)),
+            ((NECROMANCER, "focus_off"), vec!(55050, 10555)),
+            ((NECROMANCER, "greatsword"), vec!(29705, 30799, 29867, 30163, 30860, 29855, 29740)),
+            ((NECROMANCER, "spear"), vec!(73012, 10692, 73068, 10694, 73013, 10619, 73107, 10695, 73007, 10616)),
+            ((NECROMANCER, "pistol_main"), vec!(62517, 62513, 62511)),
+            ((NECROMANCER, "scepter_main"), vec!(10698, 10532, 10709)),
+            ((NECROMANCER, "staff"), vec!(10596, 19117, 10605, 19116, 19115)),
+            ((NECROMANCER, "sword_main"), vec!(71986, 71850, 72051, 71883, 71914, 71799, 71871)),
+            ((NECROMANCER, "sword_off"), vec!(71813, 72068, 71998, 71926)),
+            ((NECROMANCER, "torch_off"), vec!(45846, 44296)),
+            ((NECROMANCER, "trident"), vec!(10623, 10624, 10625, 10628, 10629)),
+            ((NECROMANCER, "warhorn_off"), vec!(10556, 10557)),
+        ]);
+
+        let mut weapon_skills = vec!();
+        for weapon_type in self.weapon_types {
+            let k = (profession, weapon_type);
+            if let Some(mapping) = skillmap.get(&k) {
+                weapon_skills.extend(mapping);
+            }
+        }
+
+        weapon_skills
+    }
+
+    /*
     fn statid(stat: &str) -> Option<u16> {
-        let mapping:HashMap<&str,u16> = HashMap::from([
+        let mapping: HashMap<&str,u16> = HashMap::from([
             ("Mighty", 137),
             ("Precise", 138),
             ("Vital", 139),
@@ -208,8 +251,28 @@ impl GearTemplate {
         ]);
         mapping.get(stat).copied()
     }
+    */
 
     pub fn parse_string(build_str: &str) -> Result<GearTemplate, Box<dyn Error>> {
+
+        let mut weapon_types = vec!();
+
+        let weapon2h_re = Regex::new(r##"(?<WEAPONTYPE>greatsword|hammer|longbow|rifle|shortbow|spear|staff)\(stat="(?<WEAPON>[A-Za-z']+)", sigils=\["(?<SIGIL1>[A-Za-z']+)", "(?<SIGIL2>[A-Za-z']+)"\]\) }}"##).unwrap();
+        for caps in weapon2h_re.captures_iter(build_str) {
+            weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
+        }
+
+        let weaponmain_re = Regex::new(r##"(?<WEAPONTYPE>(axe|dagger|mace|pistol|scepter|sword)_main)\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        for caps in weaponmain_re.captures_iter(build_str) {
+            weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
+        }
+
+        let weaponoff_re = Regex::new(r##"(?<WEAPONTYPE>(axe|dagger|focus|mace|pistol|shield|sword|torch|warhorn)_off)\(stat="(?<WEAPON>[A-Za-z']+)", sigil="(?<SIGIL>[A-Za-z']+)"\) }}"##).unwrap();
+        for caps in weaponoff_re.captures_iter(build_str) {
+            weapon_types.push(caps.name("WEAPONTYPE").unwrap().as_str());
+        }
+
+        /*
         // ------------------------------------------------------------
         // {{ light(stat="ARMOR'S", rune="RUNE") }}
         let armor_re = Regex::new(r##"(?<WEIGHT>light|medium|heavy)\(stat="(?<ARMOR>[A-Za-z']+)", rune="(?<RUNE>[A-Za-z']+)"\) }}"##).unwrap();
@@ -222,8 +285,6 @@ impl GearTemplate {
         println!("  Stat Id: {:?}", Self::statid(armor));
 
         println!("RUNE: {:?}", rune);
-
-        // TODO: handle all three cases: 4x1h; 2h + 2x2h; 2x2h
 
         // ------------------------------------------------------------
         // {{ greatsword(stat="Berserker's", sigils=["Force", "Hydromancy"]) }}
@@ -270,13 +331,19 @@ impl GearTemplate {
         let relic = &trinket_captures["RELIC"];
         println!("TRINKET: {:?}", trinket);
         println!("RELIC: {:?}", relic);
+        */
+
+        weapon_types.resize(4, "");
 
         Ok(GearTemplate{
-            armor: [161; 6],                        // berserker's
-            rune:  24836,                           // scholar
-            weapon_types: [0; 4],                   // ? gs, sw/sw
+            weapon_types: weapon_types.try_into().unwrap(),
+
+            // TODO: remove hardcoding
             weapons: [161; 4],                      // berserker's
             sigils: [24615, 24597, 24615, 24554],   // force/hydro, force/air
+
+            armor: [161; 6],                        // berserker's
+            rune:  24836,                           // scholar
 
             trinkets: [161; 6],                     // berserker's
             relic: 101580                           // thief
