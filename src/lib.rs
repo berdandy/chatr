@@ -213,7 +213,7 @@ impl<'a> GearTemplate<'a> {
         mapping.get(stat).copied()
     }
 
-    pub fn parse_string(build_str: &str) -> Result<GearTemplate, Box<dyn Error>> {
+    pub fn parse_string(build_str: &str) -> Result<GearTemplate<'_>, Box<dyn Error>> {
 
         let mut weapon_types = vec!();
 
@@ -590,7 +590,7 @@ impl<'a> ChatCode<'a> {
 	/// Returns Ok(chatcode) if "[&codestring]" or "codestring", but Err otherwise
 	///
 	/// * Note: codestring is not validated for base64 correctness
-	pub fn build(code: &str) -> Result<ChatCode, &str> {
+	pub fn build(code: &str) -> Result<ChatCode<'_>, &str> {
 
 		let head = code.strip_prefix("[&");
 		let tail = head.and_then(|c| c.strip_suffix(']'));
