@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # 0.7.0 (2025-11-01)
 
 <csr-id-1e2c89f4a017e6e9507d5809ad74c2ea66d17534/>
+<csr-id-0bc46895fe778a042dc550bf1b176ef6c948230c/>
 
 ## New Features
 
@@ -25,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 8 commits contributed to the release over the course of 115 calendar days.
+ - 9 commits contributed to the release over the course of 115 calendar days.
  - 115 days passed between releases.
  - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.0 ([`240cf63`](https://github.com/berdandy/chatr/commit/240cf6334ef66a3b92fc9dc0c28ddfd80d9a026b))
     - Clippy warnings ([`0bc4689`](https://github.com/berdandy/chatr/commit/0bc46895fe778a042dc550bf1b176ef6c948230c))
     - Release chatr v0.7.0 ([`b62fce7`](https://github.com/berdandy/chatr/commit/b62fce7f2e7fe067fd6276374d6187bcfb080be0))
     - Release chatr v0.7.0 ([`d0c2bb8`](https://github.com/berdandy/chatr/commit/d0c2bb8c2c4a97c10be938bc993f31acfaa2884a))
