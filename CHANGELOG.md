@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 5 commits contributed to the release over the course of 115 calendar days.
+ - 6 commits contributed to the release over the course of 115 calendar days.
  - 115 days passed between releases.
  - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.0 ([`d0c2bb8`](https://github.com/berdandy/chatr/commit/d0c2bb8c2c4a97c10be938bc993f31acfaa2884a))
     - Release chatr v0.7.0 ([`7fb7856`](https://github.com/berdandy/chatr/commit/7fb7856d2ac8a7c6ee1dbe0124be4916f7d8bd2f))
     - Updated chatr embedded data to latest api ([`500cff0`](https://github.com/berdandy/chatr/commit/500cff05e9b9c51d8c791ec1127412092586c4dc))
     - Bump slab from 0.4.10 to 0.4.11 ([`80efcf9`](https://github.com/berdandy/chatr/commit/80efcf9d9362bddbda67ac10d1e8558709815de7))
