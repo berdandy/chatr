@@ -5,7 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.7.0 (2025-11-01)
+
+## New Features
+
+ - <csr-id-500cff05e9b9c51d8c791ec1127412092586c4dc/> updated chatr embedded data to latest api
+
+## Refactor
+
+ - <csr-id-1e2c89f4a017e6e9507d5809ad74c2ea66d17534/> dead code removal
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 4 commits contributed to the release over the course of 115 calendar days.
+ - 115 days passed between releases.
+ - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Updated chatr embedded data to latest api ([`500cff0`](https://github.com/berdandy/chatr/commit/500cff05e9b9c51d8c791ec1127412092586c4dc))
+    - Bump slab from 0.4.10 to 0.4.11 ([`80efcf9`](https://github.com/berdandy/chatr/commit/80efcf9d9362bddbda67ac10d1e8558709815de7))
+    - Updated professions offline cache ([`265d022`](https://github.com/berdandy/chatr/commit/265d0223e9e356760045200294f65a610356dba5))
+    - Dead code removal ([`1e2c89f`](https://github.com/berdandy/chatr/commit/1e2c89f4a017e6e9507d5809ad74c2ea66d17534))
+</details>
+
 # 0.6.24 (2025-07-08)
+
+<csr-id-30c79c06f1a7fccb68050b47822ee3abdf474e5a/>
 
 ## Chore
 
@@ -20,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 1 day passed between releases.
  - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -32,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.6.24 ([`04c47fc`](https://github.com/berdandy/chatr/commit/04c47fc209347ec5367ed1f3f0285805d5d3bd3c))
     - Improved gear template parsing of build files ([`fbeff2a`](https://github.com/berdandy/chatr/commit/fbeff2a4eb87d368f51236f8c66d9d6c13aa554c))
     - Added professions json with new skill data. Still need to write data builder for it ([`30c79c0`](https://github.com/berdandy/chatr/commit/30c79c06f1a7fccb68050b47822ee3abdf474e5a))
     - Added necromancer weapon type parsing of builds (other professions and less hardcoding to follow) ([`37d9bd2`](https://github.com/berdandy/chatr/commit/37d9bd247a340bc4983718c3481300c916d897fc))
