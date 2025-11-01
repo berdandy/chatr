@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # 0.7.0 (2025-11-01)
 
+<csr-id-1e2c89f4a017e6e9507d5809ad74c2ea66d17534/>
+
 ## New Features
 
  - <csr-id-500cff05e9b9c51d8c791ec1127412092586c4dc/> updated chatr embedded data to latest api
@@ -19,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 4 commits contributed to the release over the course of 115 calendar days.
+ - 5 commits contributed to the release over the course of 115 calendar days.
  - 115 days passed between releases.
  - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -31,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.0 ([`7fb7856`](https://github.com/berdandy/chatr/commit/7fb7856d2ac8a7c6ee1dbe0124be4916f7d8bd2f))
     - Updated chatr embedded data to latest api ([`500cff0`](https://github.com/berdandy/chatr/commit/500cff05e9b9c51d8c791ec1127412092586c4dc))
     - Bump slab from 0.4.10 to 0.4.11 ([`80efcf9`](https://github.com/berdandy/chatr/commit/80efcf9d9362bddbda67ac10d1e8558709815de7))
     - Updated professions offline cache ([`265d022`](https://github.com/berdandy/chatr/commit/265d0223e9e356760045200294f65a610356dba5))
