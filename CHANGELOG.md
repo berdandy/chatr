@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.7.1 (2026-02-14)
+
+## Chore
+
+ - <csr-id-04b5bc62a6e33898fa318e86d5674bc628d84df5/> cargo update
+ - <csr-id-db465749931cfa59e57d3b26c547cf3c1100137b/> cargo update
+ - <csr-id-31c18a730d2a90ea8511fc2deace564bf81a5270/> updated professions api cache
+
+## New Features
+
+ - <csr-id-4915413e6f9462fd6961a5b36f4df853879e2021/> improved skill lookup error feedback
+
+## Bug Fixes
+
+ - <csr-id-0a17ed94d2445e202127545c361d7a849c222736/> failing test for revenant api
+
+## Other
+
+ - <csr-id-4a53ca1ff0f7afa9a7c99e2ba7533b0461ba52cb/> bump bytes from 1.10.1 to 1.11.1
+   Bumps [bytes](https://github.com/tokio-rs/bytes) from 1.10.1 to 1.11.1.
+   - [Release notes](https://github.com/tokio-rs/bytes/releases)
+   - [Changelog](https://github.com/tokio-rs/bytes/blob/master/CHANGELOG.md)
+   - [Commits](https://github.com/tokio-rs/bytes/compare/v1.10.1...v1.11.1)
+   
+   ---
+   updated-dependencies:
+   - dependency-name: bytes
+     dependency-version: 1.11.1
+     dependency-type: indirect
+   ...
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 6 commits contributed to the release over the course of 9 calendar days.
+ - 6 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Cargo update ([`04b5bc6`](https://github.com/berdandy/chatr/commit/04b5bc62a6e33898fa318e86d5674bc628d84df5))
+    - Cargo update ([`db46574`](https://github.com/berdandy/chatr/commit/db465749931cfa59e57d3b26c547cf3c1100137b))
+    - Improved skill lookup error feedback ([`4915413`](https://github.com/berdandy/chatr/commit/4915413e6f9462fd6961a5b36f4df853879e2021))
+    - Failing test for revenant api ([`0a17ed9`](https://github.com/berdandy/chatr/commit/0a17ed94d2445e202127545c361d7a849c222736))
+    - Updated professions api cache ([`31c18a7`](https://github.com/berdandy/chatr/commit/31c18a730d2a90ea8511fc2deace564bf81a5270))
+    - Bump bytes from 1.10.1 to 1.11.1 ([`4a53ca1`](https://github.com/berdandy/chatr/commit/4a53ca1ff0f7afa9a7c99e2ba7533b0461ba52cb))
+</details>
+
 # 0.7.0 (2025-11-01)
 
 <csr-id-1e2c89f4a017e6e9507d5809ad74c2ea66d17534/>
@@ -26,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 10 commits contributed to the release over the course of 115 calendar days.
+ - 11 commits contributed to the release over the course of 115 calendar days.
  - 115 days passed between releases.
  - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -38,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.0 ([`ea7beb5`](https://github.com/berdandy/chatr/commit/ea7beb5e2172bb59c81e8066977861c8887a1375))
     - Release chatr v0.7.0 ([`8f2fca4`](https://github.com/berdandy/chatr/commit/8f2fca4f5b54656872d4c3a744fbd35d923e54df))
     - Release chatr v0.7.0 ([`240cf63`](https://github.com/berdandy/chatr/commit/240cf6334ef66a3b92fc9dc0c28ddfd80d9a026b))
     - Clippy warnings ([`0bc4689`](https://github.com/berdandy/chatr/commit/0bc46895fe778a042dc550bf1b176ef6c948230c))
