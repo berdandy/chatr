@@ -238,7 +238,7 @@ mod tests {
     }
 
     #[test]
-    fn revenant_handle_alliance_api_missing() {
+    fn revenant_handle_alliance_api() {
         let chatcode  = String::from("DQkDPg86RRncEdwRBhIrEisSBhLUEdQRyhHKEQcDAgMrEgYS1BEGEisS1BECWgAyAAA=");
         let data = BASE64.decode(chatcode).expect("invaid base64");
 
@@ -246,6 +246,6 @@ mod tests {
         let result = armory_misc(&build);
 
         assert!(result.is_ok());
-        assert_eq!(armory_misc(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28419,62891'></div><div data-armory-embed='skills' data-armory-ids='27372,28516,26679,26557,27975'></div><div data-armory-embed='skills' data-armory-ids='62719,62832,62962,62878,62942'></div>"));
+        assert_eq!(armory_misc(&build).unwrap(), String::from("<div data-armory-embed='skills' data-armory-nokey=true data-armory-ids='28419,62749'></div><div data-armory-embed='skills' data-armory-ids='27372,28516,26679,26557,27975'></div><div data-armory-embed='skills' data-armory-ids='62719,62832,62962,62878,62942'></div>"));
     }
 } 
