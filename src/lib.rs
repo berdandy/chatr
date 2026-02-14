@@ -417,11 +417,11 @@ impl BuildTemplate {
 		let palette = PALETTE_SKILLS_BY_PROFESSION[idx].as_ref().expect("invalid profession palette skill map");
 
 		let skills: [u32 ; 5] = [
-			palette[&self.healing.terrestrial],
-			palette[&self.utility[0].terrestrial],
-			palette[&self.utility[1].terrestrial],
-			palette[&self.utility[2].terrestrial],
-			palette[&self.elite.terrestrial],
+			*palette.get(&self.healing.terrestrial).unwrap_or_else(|| panic!("Invalid heal skill (id:{}) in chat code", &self.healing.terrestrial)),
+			*palette.get(&self.utility[0].terrestrial).unwrap_or_else(|| panic!("Invalid utility skill 1 (id:{}) in chat code", &self.utility[0].terrestrial)),
+			*palette.get(&self.utility[1].terrestrial).unwrap_or_else(|| panic!("Invalid utility skill 2 (id:{}) in chat code", &self.utility[1].terrestrial)),
+			*palette.get(&self.utility[2].terrestrial).unwrap_or_else(|| panic!("Invalid utility skill 3 (id:{}) in chat code", &self.utility[2].terrestrial)),
+			*palette.get(&self.elite.terrestrial).unwrap_or_else(|| panic!("Invalid elite skill (id:{}) in chat code", &self.elite.terrestrial)),
 		];
 		Ok(skills)
 	}
