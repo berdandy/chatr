@@ -5,7 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.7.2 (2026-06-20)
+
+## Chore
+
+ - <csr-id-c549dbac739f7718f14df41415fa90289bf3e042/> library update
+ - <csr-id-5095c1eaf6870267e8c195d1ddfbe7a6729486b2/> fixed openssl vulnerability
+
+## New Features
+
+ - <csr-id-baf632a1fa5f56a50410d8f81944b24383469411/> updating api cache
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 4 commits contributed to the release over the course of 54 calendar days.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Updating api cache ([`baf632a`](https://github.com/berdandy/chatr/commit/baf632a1fa5f56a50410d8f81944b24383469411))
+    - Library update ([`c549dba`](https://github.com/berdandy/chatr/commit/c549dbac739f7718f14df41415fa90289bf3e042))
+    - Openssl CVE-2026-42327 ([`6ecae05`](https://github.com/berdandy/chatr/commit/6ecae05eafe2571f3f85fec647cf18caf7c1d511))
+    - Fixed openssl vulnerability ([`5095c1e`](https://github.com/berdandy/chatr/commit/5095c1eaf6870267e8c195d1ddfbe7a6729486b2))
+</details>
+
 # 0.7.1 (2026-02-14)
+
+<csr-id-04b5bc62a6e33898fa318e86d5674bc628d84df5/>
+<csr-id-db465749931cfa59e57d3b26c547cf3c1100137b/>
+<csr-id-31c18a730d2a90ea8511fc2deace564bf81a5270/>
+<csr-id-4a53ca1ff0f7afa9a7c99e2ba7533b0461ba52cb/>
 
 ## Chore
 
@@ -40,7 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 6 commits contributed to the release over the course of 9 calendar days.
+ - 7 commits contributed to the release over the course of 9 calendar days.
  - 6 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -51,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.1 ([`6a7fb96`](https://github.com/berdandy/chatr/commit/6a7fb962d8d6a7108eaac073e4fe0053802882ab))
     - Cargo update ([`04b5bc6`](https://github.com/berdandy/chatr/commit/04b5bc62a6e33898fa318e86d5674bc628d84df5))
     - Cargo update ([`db46574`](https://github.com/berdandy/chatr/commit/db465749931cfa59e57d3b26c547cf3c1100137b))
     - Improved skill lookup error feedback ([`4915413`](https://github.com/berdandy/chatr/commit/4915413e6f9462fd6961a5b36f4df853879e2021))
