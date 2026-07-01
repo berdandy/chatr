@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-# 0.7.2 (2026-06-20)
+# 0.7.2 (2026-06-30)
+
+<csr-id-c549dbac739f7718f14df41415fa90289bf3e042/>
+<csr-id-5095c1eaf6870267e8c195d1ddfbe7a6729486b2/>
 
 ## Chore
 
@@ -15,13 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## New Features
 
  - <csr-id-baf632a1fa5f56a50410d8f81944b24383469411/> updating api cache
+ - <csr-id-7c56daaaae829ea1b7ce44e873d5645ff29bdb64/> updating professions api cache
 
 ## Commit Statistics
 
 <csr-read-only-do-not-edit/>
 
- - 4 commits contributed to the release over the course of 54 calendar days.
- - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 6 commits contributed to the release over the course of 65 calendar days.
+ - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
 ## Commit Details
@@ -31,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Updating professions api cache ([`7c56daa`](https://github.com/berdandy/chatr/commit/7c56daaaae829ea1b7ce44e873d5645ff29bdb64))
+    - Release chatr v0.7.2 ([`6859142`](https://github.com/berdandy/chatr/commit/6859142f052ceb2ea64be1aefa0a1861bac84344))
     - Updating api cache ([`baf632a`](https://github.com/berdandy/chatr/commit/baf632a1fa5f56a50410d8f81944b24383469411))
     - Library update ([`c549dba`](https://github.com/berdandy/chatr/commit/c549dbac739f7718f14df41415fa90289bf3e042))
     - Openssl CVE-2026-42327 ([`6ecae05`](https://github.com/berdandy/chatr/commit/6ecae05eafe2571f3f85fec647cf18caf7c1d511))
