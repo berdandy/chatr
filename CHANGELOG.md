@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 6 commits contributed to the release over the course of 65 calendar days.
+ - 7 commits contributed to the release over the course of 65 calendar days.
  - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.2 ([`0a23292`](https://github.com/berdandy/chatr/commit/0a2329204d2eb5b80db5d259d71b0f1ac913b3a0))
     - Updating professions api cache ([`7c56daa`](https://github.com/berdandy/chatr/commit/7c56daaaae829ea1b7ce44e873d5645ff29bdb64))
     - Release chatr v0.7.2 ([`6859142`](https://github.com/berdandy/chatr/commit/6859142f052ceb2ea64be1aefa0a1861bac84344))
     - Updating api cache ([`baf632a`](https://github.com/berdandy/chatr/commit/baf632a1fa5f56a50410d8f81944b24383469411))
