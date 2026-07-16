@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 0.7.3 (2026-07-15)
+
+## Chore
+
+ - <csr-id-1110bb980f2e8d46c9a890cd2939c46e4fc83129/> version bump
+ - <csr-id-27548959c7e505ed3d261992960ab3a39f67f967/> improved comments
+
+## Other
+
+ - <csr-id-6c5bc10ced07d1c300b71e21747b20e2c68f19eb/> updated api cache
+
+## Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 3 commits contributed to the release.
+ - 14 days passed between releases.
+ - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+## Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Version bump ([`1110bb9`](https://github.com/berdandy/chatr/commit/1110bb980f2e8d46c9a890cd2939c46e4fc83129))
+    - Updated api cache ([`6c5bc10`](https://github.com/berdandy/chatr/commit/6c5bc10ced07d1c300b71e21747b20e2c68f19eb))
+    - Improved comments ([`2754895`](https://github.com/berdandy/chatr/commit/27548959c7e505ed3d261992960ab3a39f67f967))
+</details>
+
 # 0.7.2 (2026-06-30)
 
 <csr-id-c549dbac739f7718f14df41415fa90289bf3e042/>
@@ -24,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 7 commits contributed to the release over the course of 65 calendar days.
+ - 8 commits contributed to the release over the course of 65 calendar days.
  - 4 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
 
@@ -35,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release chatr v0.7.2 ([`ed07b5c`](https://github.com/berdandy/chatr/commit/ed07b5cc7cee84f78dcbea7fdfdfef106f0c2483))
     - Release chatr v0.7.2 ([`0a23292`](https://github.com/berdandy/chatr/commit/0a2329204d2eb5b80db5d259d71b0f1ac913b3a0))
     - Updating professions api cache ([`7c56daa`](https://github.com/berdandy/chatr/commit/7c56daaaae829ea1b7ce44e873d5645ff29bdb64))
     - Release chatr v0.7.2 ([`6859142`](https://github.com/berdandy/chatr/commit/6859142f052ceb2ea64be1aefa0a1861bac84344))
