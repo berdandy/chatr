@@ -298,7 +298,8 @@ impl<'a> GearTemplate<'a> {
         Ok(GearTemplate{
             weapon_types: weapon_types.try_into().unwrap(),
 
-            // TODO: remove hardcoding
+            // TODO: remove hardcoding, but currently gw2fulcrum is the only consumer of this
+            // feature, and it only needs the above
             weapons: [161; 4],                      // berserker's
             sigils: [24615, 24597, 24615, 24554],   // force/hydro, force/air
 
